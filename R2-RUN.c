@@ -23,6 +23,8 @@
 
 #include "R2_const.h"
 
+// This line is add on guoruoze's account
+
 // Global Variable for Robot
 int arm_left_pos  = 0;
 int arm_right_pos = 0;
