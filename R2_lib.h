@@ -126,7 +126,7 @@ void RunAt_old(float v_x, float v_y, float ang)  // x, y -1..+1  ang -180..+180
 	if (deg>180) deg=180;
 	servoChangeRate[servo_clip_left]=speed;
 	i=round(deg*(max-min)/180)+min;
-	servo[servo_clip_left]=round(i);
+	servo[servo_clip_left]=round(250-i);
 };
 
 void servo_clip_right_MoveToDeg(float  deg, int speed)
@@ -138,7 +138,7 @@ void servo_clip_right_MoveToDeg(float  deg, int speed)
 	if (deg>180) deg=180;
 	servoChangeRate[servo_clip_right]=speed;
 	i=round(deg*(max-min)/180)+min;
-	servo[servo_clip_right]=round(250-i);
+	servo[servo_clip_right]=round(i);
 };
 
 void servo_left_hand_bottom_MoveToDeg(float  deg, int speed)
@@ -192,21 +192,21 @@ void servo_right_hand_top_MoveToDeg(float deg, int speed)
 
 void arm_pickup_park ()
 {
-	servo_clip_left_MoveToDeg(140, SERVO_SPEED_VERY_SLOW);
-	servo_clip_right_MoveToDeg(140, SERVO_SPEED_VERY_SLOW);
+	servo_clip_left_MoveToDeg(ARM_CLIP_PARK_ANG, SERVO_SPEED_VERY_SLOW);
+	servo_clip_right_MoveToDeg(ARM_CLIP_PARK_ANG, SERVO_SPEED_VERY_SLOW);
 	arm_clip_pos=ARM_CLIP_PARK;
 }
 void arm_pickup_clip ()
 {
-	servo_clip_left_MoveToDeg(0, SERVO_SPEED_NORMAL);
-	servo_clip_right_MoveToDeg(0, SERVO_SPEED_NORMAL);
+	servo_clip_left_MoveToDeg(ARM_CLIP_CLIP_ANG, SERVO_SPEED_NORMAL);
+	servo_clip_right_MoveToDeg(ARM_CLIP_CLIP_ANG, SERVO_SPEED_NORMAL);
 	arm_clip_pos=ARM_CLIP_CLIP;
 
 }
 void arm_pickup_release ()
 {
-  servo_clip_left_MoveToDeg(90, SERVO_SPEED_NORMAL);
-  servo_clip_right_MoveToDeg(90, SERVO_SPEED_NORMAL);
+  servo_clip_left_MoveToDeg(ARM_CLIP_RELEASE_ANG, SERVO_SPEED_NORMAL);
+  servo_clip_right_MoveToDeg(ARM_CLIP_RELEASE_ANG, SERVO_SPEED_NORMAL);
 	arm_clip_pos=ARM_CLIP_RELEASE;
 }
 
@@ -313,6 +313,10 @@ void init_IR_sensor(){
   HTIRS2setDSPMode(sensor_IR, DSP_1200);
 }
 
+int get_IR_direction(){
+    return  HTIRS2readACDir(sensor_IR);
+}
+
 void init_prototype_board(){
   HTSPBsetupIO(HTSPB, 0x00);
 }
@@ -326,4 +330,12 @@ void reset_angle_sensor(){
 
   arm_left_pos=0;
 	arm_right_pos=0;
+}
+
+int get_left_ring_weight(){
+  return 1023-HTSPBreadADC(HTSPB, 0, 10);
+}
+
+int get_right_ring_weight(){
+  return 1023-HTSPBreadADC(HTSPB, 1, 10);
 }

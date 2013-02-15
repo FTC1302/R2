@@ -8,8 +8,8 @@
 #pragma config(Motor,  mtr_S1_C2_2,     arm_motor_right, tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_1,     drive_motor_3, tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_2,     drive_motor_4, tmotorTetrix, openLoop)
-#pragma config(Servo,  srvo_S1_C4_1,    servo_clip_left,      tServoStandard)
-#pragma config(Servo,  srvo_S1_C4_2,    servo_clip_right,     tServoStandard)
+#pragma config(Servo,  srvo_S1_C4_1,    servo_clip_right,      tServoStandard)
+#pragma config(Servo,  srvo_S1_C4_2,    servo_clip_left,     tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_3,    servo_left_hand_bottom, tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_4,    servo_left_hand_top,  tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_5,    servo_right_hand_bottom, tServoStandard)
@@ -316,6 +316,12 @@ task main()
 
 
     // clip arm control
+    if ((arm_clip_pos==ARM_CLIP_RELEASE) & (time1[timer_clipping]>1000))  // weighting
+    {
+		  servo_clip_left_MoveToDeg(ARM_CLIP_RELEASE_ANG-round(get_left_ring_weight()/400.0*90), SERVO_SPEED_NORMAL);
+		  servo_clip_right_MoveToDeg(ARM_CLIP_RELEASE_ANG-round(get_right_ring_weight()/400.0*90), SERVO_SPEED_NORMAL);
+    };
+
     if(joy1Btn(JOY_BUTTON_A))
     {
       if ((arm_clip_pos==ARM_CLIP_RELEASE) || (arm_clip_pos==ARM_CLIP_PARK))
