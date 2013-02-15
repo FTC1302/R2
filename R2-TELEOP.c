@@ -1,5 +1,4 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S2,     sensor_arm_left_angle, sensorI2CCustom)
 #pragma config(Sensor, S3,     sensor_arm_right_angle, sensorI2CCustom)
 #pragma config(Sensor, S4,     HTSPB,          sensorI2CCustom9V)
