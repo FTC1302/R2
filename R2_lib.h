@@ -34,6 +34,16 @@ void hand_left_gua();
 void hand_right_gua();
 void hand_right_jie();
 
+void init_IR_sensor();
+int get_IR_direction();
+
+void init_prototype_board();
+
+void reset_angle_sensor();
+
+int get_left_ring_weight();
+int get_right_ring_weight();
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 

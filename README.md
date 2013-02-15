@@ -231,5 +231,23 @@ bool is_arm_right_touch_bottom();
 int get_arm_right_pos();
 //以上右机械臂函数参考左机械臂说明。
 
+
+void init_IR_sensor();
+//初始化红外传感器
+
+int get_IR_direction();
+// 读取红外传感器的方向，0-没有检测到红外线信号，1-9代表从左后方到右后方，5代表正前方。2-左，8-右
+
+void init_prototype_board();
+//初始化原型板
+
+void reset_angle_sensor();
+//重置角度传感器，将当前位置作为位置“0”。
+
+
+int get_left_ring_weight();
+int get_right_ring_weight();
+//读取左右称重传感器的重量值，0-1023，数字越大代表越重。
+
 ///////////////////////////////////////////////////////////////////////////////////
 ```
