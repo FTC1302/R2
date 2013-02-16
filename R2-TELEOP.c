@@ -133,6 +133,8 @@ task main()
   getJoystickSettings(joystick);
   while (joystick.StopPgm)
   {
+    PlaySound(soundBlip);
+    wait1Msec(200);
     getJoystickSettings(joystick);
   };
 
