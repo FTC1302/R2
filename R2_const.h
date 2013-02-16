@@ -44,12 +44,12 @@ const int ARM_CLIP_CLIP_ANG     = 0;
 
 const int ARM_LEFT_MIN=10;
 const int ARM_LEFT_MAX=2200;
-const int ARM_LEFT_SAFE_POS=600;
+const int ARM_LEFT_SAFE_POS=500;
 const int ARM_LEFT_OPEN_POS=1000;
 
 const int ARM_RIGHT_MIN=10;
 const int ARM_RIGHT_MAX=2200;
-const int ARM_RIGHT_SAFE_POS=600;
+const int ARM_RIGHT_SAFE_POS=500;
 const int ARM_RIGHT_OPEN_POS=1000;
 
 const int ARM_TARGET_NONE   = -1;

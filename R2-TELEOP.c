@@ -186,11 +186,12 @@ task main()
     // robot move
     if (timer_protect_left_move>2000) timer_protect_left_move=2000;
     if (timer_protect_right_move>2000) timer_protect_right_move=2000;
+    if (timer_o_c_hand>2000) timer_o_c_hand=2000;
     if ((!joy1Btn(JOY_BUTTON_J1_CLICK)) & (!joy1Btn(JOY_BUTTON_J2_CLICK)))
     {
-	    if (joy1Btn(JOY_BUTTON_X))
+	    if (joy1Btn(JOY_BUTTON_B))
 	      ang=-15;
-	    else if (joy1Btn(JOY_BUTTON_B))
+	    else if (joy1Btn(JOY_BUTTON_X))
 	      ang=15;
 	    else
 	      ang=0;
