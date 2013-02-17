@@ -246,7 +246,7 @@ task main()
 
 
 		// open/close hand
-    if ((joy1Btn(JOY_BUTTON_Y)) & (timer_o_c_hand>300))
+    if (joy1Btn(JOY_BUTTON_Y) & (timer_o_c_hand>300)
     {
       timer_o_c_hand=0;
    		if (arm_left_pos>ARM_LEFT_SAFE_POS)
@@ -276,7 +276,7 @@ task main()
 			{
 				if ((x1>120) || (x1<-120))
 				{
-					if (time1[timer_left_hand_roll]>1000)
+					if (time1[timer_left_hand_roll]>200)
 					{
 						if (left_hand_pos == HAND_JIE)
 							hand_left_gua();
@@ -301,7 +301,7 @@ task main()
 			{
 				if ((x2>120) || (x2<-120))
 				{
-					if (time1[timer_right_hand_roll]>1000)
+					if (time1[timer_right_hand_roll]>200)
 					{
 						if (right_hand_pos == HAND_JIE)
 							hand_right_gua();
@@ -372,10 +372,11 @@ task main()
 	    if (timer_left_arm>BUTTON_CLICK_DELAY)
 	    {
 		  	arm_speed=100;
-		  	if ((ARM_LEFT_MAX-arm_left_pos)<500) motor[arm_motor_left]=40;
-		  	if ((ARM_LEFT_MAX-arm_left_pos)<400) motor[arm_motor_left]=30;
-		  	if ((ARM_LEFT_MAX-arm_left_pos)<300) motor[arm_motor_left]=20;
-		  	if ((ARM_LEFT_MAX-arm_left_pos)<200) motor[arm_motor_left]=10;
+		  	if ((ARM_LEFT_MAX-arm_left_pos)<500) arm_speed=40;
+		  	if ((ARM_LEFT_MAX-arm_left_pos)<400) arm_speed=39;
+		  	if ((ARM_LEFT_MAX-arm_left_pos)<300) arm_speed=38;
+		  	if ((ARM_LEFT_MAX-arm_left_pos)<200) arm_speed=40;
+		  	if ((ARM_LEFT_MAX-arm_left_pos)<0)   arm_speed=0;
 				arm_left_up(arm_speed);
 
 		  	//if ((left_hand_pos == HAND_JIE) & (arm_left_pos>ARM_LEFT_OPEN_POS)) disable hand auto open
@@ -390,10 +391,11 @@ task main()
 	    if (timer_left_arm>BUTTON_CLICK_DELAY)
 	    {
 		  	arm_speed=50;
-		  	if ((arm_left_pos-ARM_LEFT_MIN)<500) motor[arm_motor_left]=20;
-		  	if ((arm_left_pos-ARM_LEFT_MIN)<400) motor[arm_motor_left]=15;
-		  	if ((arm_left_pos-ARM_LEFT_MIN)<300) motor[arm_motor_left]=10;
-		  	if ((arm_left_pos-ARM_LEFT_MIN)<200) motor[arm_motor_left]=10;
+		  	if ((arm_left_pos-ARM_LEFT_MIN)<500) arm_speed=20;
+		  	if ((arm_left_pos-ARM_LEFT_MIN)<400) arm_speed=19;
+		  	if ((arm_left_pos-ARM_LEFT_MIN)<300) arm_speed=19;
+		  	if ((arm_left_pos-ARM_LEFT_MIN)<200) arm_speed=18;
+		  	if ((arm_left_pos-ARM_LEFT_MIN)<0) arm_speed=0;
 
 		  	//if ((left_hand_pos == HAND_GUA) & (arm_left_pos<ARM_LEFT_SAFE_POS+200))
 		  	//	hand_left_jie();
@@ -459,10 +461,11 @@ task main()
 	    if (timer_right_arm>BUTTON_CLICK_DELAY)
 	    {
 		  	arm_speed=100;
-		  	if ((ARM_RIGHT_MAX-arm_right_pos)<500) motor[arm_motor_right]=40;
-		  	if ((ARM_RIGHT_MAX-arm_right_pos)<400) motor[arm_motor_right]=30;
-		  	if ((ARM_RIGHT_MAX-arm_right_pos)<300) motor[arm_motor_right]=20;
-		  	if ((ARM_RIGHT_MAX-arm_right_pos)<200) motor[arm_motor_right]=10;
+		  	if ((ARM_RIGHT_MAX-arm_right_pos)<300) arm_speed=40;
+		  	if ((ARM_RIGHT_MAX-arm_right_pos)<200) arm_speed=39;
+		  	if ((ARM_RIGHT_MAX-arm_right_pos)<100) arm_speed=38;
+		  	if ((ARM_RIGHT_MAX-arm_right_pos)<50) arm_speed=40;
+		  	if ((ARM_RIGHT_MAX-arm_right_pos)<0) arm_speed=0;
 		  	arm_right_up(arm_speed);
 
 		  	//if ((right_hand_pos == HAND_JIE) & (arm_right_pos>ARM_RIGHT_OPEN_POS+200))
@@ -477,10 +480,11 @@ task main()
 	    if (timer_right_arm>BUTTON_CLICK_DELAY)
 	    {
 	 	  	arm_speed=50;
-		  	if ((arm_right_pos-ARM_RIGHT_MIN)<500) motor[arm_motor_right]=20;
-		  	if ((arm_right_pos-ARM_RIGHT_MIN)<400) motor[arm_motor_right]=15;
-		  	if ((arm_right_pos-ARM_RIGHT_MIN)<300) motor[arm_motor_right]=15;
-		  	if ((arm_right_pos-ARM_RIGHT_MIN)<200) motor[arm_motor_right]=10;
+		  	if ((arm_right_pos-ARM_RIGHT_MIN)<500) arm_speed=20;
+		  	if ((arm_right_pos-ARM_RIGHT_MIN)<400) arm_speed=19;
+		  	if ((arm_right_pos-ARM_RIGHT_MIN)<300) arm_speed=19;
+		  	if ((arm_right_pos-ARM_RIGHT_MIN)<200) arm_speed=18;
+		  	if ((arm_right_pos-ARM_RIGHT_MIN)<0) arm_speed=0;
 
 		  	//if ((right_hand_pos == HAND_GUA) & (arm_right_pos<ARM_RIGHT_SAFE_POS))
 		  	//	hand_right_jie();
