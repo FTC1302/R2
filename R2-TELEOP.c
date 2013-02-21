@@ -191,6 +191,8 @@ task main()
     if (timer_protect_left_move>2000) timer_protect_left_move=2000;
     if (timer_protect_right_move>2000) timer_protect_right_move=2000;
     if (timer_o_c_hand>2000) timer_o_c_hand=2000;
+    if (timer_flipping>2000) timer_flipping=2000;
+
     if ((!joy1Btn(JOY_BUTTON_J1_CLICK)) & (!joy1Btn(JOY_BUTTON_J2_CLICK)))
     {
 	    if (joy1Btn(JOY_BUTTON_B))
@@ -268,7 +270,31 @@ task main()
 					hand_right_jie();
 		  };
 	  };
-		// HAND  roll
+
+    if ((joy2Btn(JOY_BUTTON_X)) & (timer_o_c_hand>300))
+    {
+      timer_o_c_hand=0;
+   		if (arm_left_pos>ARM_LEFT_SAFE_POS)
+   		{
+				if (left_hand_pos == HAND_JIE)
+					hand_left_gua();
+				else
+					hand_left_jie();
+	    };
+	  };
+    if ((joy2Btn(JOY_BUTTON_B)) & (timer_o_c_hand>300))
+    {
+      timer_o_c_hand=0;
+   		if (arm_right_pos>ARM_RIGHT_SAFE_POS)
+   		{
+				if (right_hand_pos == HAND_JIE)
+					hand_right_gua();
+				else
+					hand_right_jie();
+		  };
+	  };
+
+	  // HAND  roll
 		if (arm_left_pos>ARM_LEFT_SAFE_POS)
 		{
       if (joy1Btn(JOY_BUTTON_J1_CLICK)) x1=joystick.joy1_x1; else x1=0;
@@ -357,7 +383,7 @@ task main()
     {
       if ((flipper_pos==FLIPPER_DOWN))
       {
-        if (timer_flipping>1000)
+        if (timer_flipping>500)
         {
         	flipper_up();
           timer_flipping=0;
@@ -365,7 +391,7 @@ task main()
       }
       else
       {
-        if (timer_flipping>1000)
+        if (timer_flipping>5                                                                               00)
         {
           flipper_down();
           timer_flipping=0;
@@ -373,14 +399,14 @@ task main()
       };
     };
 
-    if (joy2Btn(JOY_BUTTON_B) & joy2btn(JOY_BUTTON_LT))
+    if (joy2btn(JOY_BUTTON_LB))
     {
       // set move target of left arm
       if (!arm_left_moving_up_to_target)
         left_arm_move_up_one_level();
     };
 
-    if (joy2Btn(JOY_BUTTON_B) & joy2btn(JOY_BUTTON_LB))
+    if (joy2btn(JOY_BUTTON_LT))
     {
       // set move target of left arm
       if (!arm_left_moving_down_to_target)
@@ -401,7 +427,7 @@ task main()
 	    arm_left_down_pressed=true;
 	    arm_left_moving_up_to_target=false;
 	    arm_left_moving_down_to_target=false;
-	  	arm_speed=-round(joystick.joy2_y1/128*100);
+	  	arm_speed=abs(round(joystick.joy2_y1/128.0*100));
 	  	if (!is_arm_left_touch_bottom())
 				arm_left_down(arm_speed);
 			else
@@ -433,14 +459,14 @@ task main()
     };
 
 
-    if (joy2Btn(JOY_BUTTON_RT))
+    if (joy2Btn(JOY_BUTTON_RB))
     {
       // set move target of right arm
       if (!arm_right_moving_up_to_target)
         right_arm_move_up_one_level();
     };
 
-    if (joy2Btn(JOY_BUTTON_RB))
+    if (joy2Btn(JOY_BUTTON_RT))
     {
       // set move target of right arm
       if (!arm_right_moving_down_to_target)
@@ -453,7 +479,7 @@ task main()
 	    arm_right_up_pressed=true;
 	    arm_right_moving_up_to_target=false;
 	    arm_right_moving_down_to_target=false;
-	  	arm_speed=round(joystick.joy2_y2/128*100);
+	  	arm_speed=round(joystick.joy2_y2/128.0*100);
 	  	arm_right_up(arm_speed);
 	  }
 	  else if((joystick.joy2_y2<-5) & (arm_right_pos>ARM_RIGHT_MIN))   // RIGHT ARM DOWN
@@ -461,7 +487,8 @@ task main()
 	    arm_right_down_pressed=true;
 	    arm_right_moving_up_to_target=false;
 	    arm_right_moving_down_to_target=false;
-	  	arm_speed=-round(joystick.joy2_y2/128*100);
+	  	arm_speed=-round(joystick.joy2_y2/128.0*100);
+      nxtDisplayTextLine(1, "L%3dR%3d %3d %3d",joystick.joy2_y1, joystick.joy2_y2, arm_speed, is_arm_right_touch_bottom());
 	  	if (!is_arm_right_touch_bottom())
 				arm_right_down(arm_speed);
 			else

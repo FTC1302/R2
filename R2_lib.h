@@ -224,6 +224,8 @@ void flipper_down(){
   nMotorEncoderTarget[nxtmotor_flapper_right] = FLAPPER_ANG;
   motor[nxtmotor_flapper_left] = FLAPPER_SPEED;
   motor[nxtmotor_flapper_right] = FLAPPER_SPEED;
+  flipper_pos=FLIPPER_DOWN;
+
 }
 
 void flipper_up(){
@@ -231,6 +233,7 @@ void flipper_up(){
   nMotorEncoderTarget[nxtmotor_flapper_right] = FLAPPER_ANG;
   motor[nxtmotor_flapper_left] = -FLAPPER_SPEED;
   motor[nxtmotor_flapper_right] = -FLAPPER_SPEED;
+  flipper_pos=FLIPPER_UP;
 }
 
 void arm_left_stop(){
