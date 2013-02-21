@@ -112,27 +112,30 @@ void init()
 void init_arm_pos()
 {
 	bool arm_left_touch_bottom, arm_right_touch_bottom;
+	ClearTimer(T1);
+	arm_left_touch_bottom=is_arm_left_touch_bottom();
+	arm_right_touch_bottom=is_arm_right_touch_bottom();
+
   while(true)
 	{
-	  break;
-		arm_left_touch_bottom=is_arm_left_touch_bottom();
-		arm_right_touch_bottom=is_arm_right_touch_bottom();
+
+    nxtDisplayTextLine(0, "%d, %d",arm_left_touch_bottom, arm_right_touch_bottom);
+		if (arm_left_touch_bottom!=is_arm_left_touch_bottom()){
+	  	arm_left_touch_bottom=is_arm_left_touch_bottom();
+		  PlaySound(soundBeepBeep);
+		};
+		if (arm_right_touch_bottom!=is_arm_right_touch_bottom()){
+  		arm_right_touch_bottom=is_arm_right_touch_bottom();
+		  PlaySound(soundBeepBeep);
+		};
 
 		if (arm_left_touch_bottom & arm_right_touch_bottom)
 			break;
-		if ((!arm_left_touch_bottom) || (!arm_right_touch_bottom))
-      PlaySound(soundBlip);
-		/*
-		if (!arm_left_touch_bottom)
-			arm_left_down(10);
-		else
-			arm_left_stop();
 
-		if (!arm_right_touch_bottom)
-			arm_right_down(10);
-		else
-			arm_right_stop();
-		*/
+	  if (time1[T1]>1000) {
+      PlaySound(soundBlip);
+     	ClearTimer(T1);
+    };
 	};
 	reset_angle_sensor();
 
@@ -142,35 +145,6 @@ void init_arm_pos()
 
 task main()
 {
-  /*
-  int a=1;
-  nMotorEncoder[nxtmotor_flapper_left] = 0;  //clear the LEGO motor encoders
-  nMotorEncoder[nxtmotor_flapper_right] = 0;
-while(true){
-  nMotorEncoderTarget[nxtmotor_flapper_left] = FLAPPER_ANG; //set the target stoping position
-  nMotorEncoderTarget[nxtmotor_flapper_right] = FLAPPER_ANG;
-
-  motor[nxtmotor_flapper_left] = a*FLAPPER_SPEED; //turn both motors on at 30 percent power
-  motor[nxtmotor_flapper_right] = a*FLAPPER_SPEED;
-  a=-a;
-
-  while (nMotorRunState[nxtmotor_flapper_left] != runStateIdle || nMotorRunState[nxtmotor_flapper_right] != runStateIdle) //while the encoder wheel turns one revolution
-  {
-    // This condition waits for motors B + C to come to an idle position. Both motors stop
-    // and then jumps out of the loop
-  }
-
-  motor[nxtmotor_flapper_left] = 0; //turn both motors off
-  motor[nxtmotor_flapper_right] = 0;
-
-  wait1Msec(1000);  // wait 3 seconds to see feedback on the debugger screens
-                    // open the "NXT Devices" window to see the distance the encoder spins.
-                    // the robot will come to a stop at the nMotorEncoderTarget position.
-};
-
-
-  wait1Msec(10000);
-  */
    // all code will be ignored when joystick in stop mode
   getJoystickSettings(joystick);
   while (joystick.StopPgm)
@@ -191,7 +165,7 @@ while(true){
 
 	init();
 	init_arm_pos();
-	PlaySound(soundBeepBeep);
+	PlaySound(soundDownwardTones);
   while (true)
   {
     // process self defined timer
@@ -206,20 +180,6 @@ while(true){
   	// process angle sensor
   	arm_left_pos=get_arm_left_pos();
   	arm_right_pos=get_arm_right_pos();
-    // process IR sensor
-    _dirAC = HTIRS2readACDir(sensor_IR);
-    if (_dirAC >= 0)
-    {
-    	if (HTIRS2readAllACStrength(sensor_IR, acS1, acS2, acS3, acS4, acS5 ))
-    	{
-				nxtDisplayTextLine(1, "IR:%d", _dirAC);
-		    //displayText(2, "0", dcS1, acS1);
-		    //displayText(3, "1", dcS2, acS2);
-		    //displayText(4, "2", dcS3, acS3);
-		    //displayText(5, "3", dcS4, acS4);
-		    //displayText(6, "4", dcS5, acS5);
-    	}
-    };
 		// process joystick control
 
     getJoystickSettings(joystick);
@@ -233,7 +193,7 @@ while(true){
     {
 	    if (joy1Btn(JOY_BUTTON_B))
 	      ang=-15;
-	    else if (joy1Btn(JOY_BUTTON_X))
+	    else if (joy1Btn(JOY_BUTTON_X) )
 	      ang=15;
 	    else
 	      ang=0;
@@ -266,7 +226,7 @@ while(true){
 		      case JOY_BUTTON_TOPHAT_DOWN_LEFT: x=-speed;   y=-speed;   break;
 		      case JOY_BUTTON_TOPHAT_LEFT:      x=-speed;   y=0;        break;
 		      case JOY_BUTTON_TOPHAT_UP_LEFT:   x=-speed;   y=speed;    break;
-		      default: x=0; y=0; break;
+				  default: x=0; y=0; break;
 		    };
 		  };
 		  if (timer_protect_left_move<1000) {x=0; y=0; ang=0;};
@@ -288,7 +248,7 @@ while(true){
 
 
 		// open/close hand
-    if ((joy1Btn(JOY_BUTTON_Y)) & (timer_o_c_hand>300))
+    if ((joy2Btn(JOY_BUTTON_Y)) & (timer_o_c_hand>300))
     {
       timer_o_c_hand=0;
    		if (arm_left_pos>ARM_LEFT_SAFE_POS)
@@ -391,11 +351,11 @@ while(true){
       };
     };
 
-    if ((!arm_left_up_pressed) & !joy1Btn(JOY_BUTTON_LT)
-      & (!arm_left_down_pressed) & !joy1Btn(JOY_BUTTON_LB))  // detect click
+    if ((!arm_left_up_pressed) & !joy2btn(JOY_BUTTON_LT)
+      & (!arm_left_down_pressed) & !joy2btn(JOY_BUTTON_LB))  // detect click
       timer_left_arm=0;
 
-    if (arm_left_up_pressed & !joy1Btn(JOY_BUTTON_LT))
+    if (arm_left_up_pressed & !joy2btn(JOY_BUTTON_LT))
     {
       // set move target of left arm
       if (timer_left_arm<BUTTON_CLICK_DELAY)
@@ -403,7 +363,7 @@ while(true){
       arm_left_up_pressed=false;
     };
 
-    if (arm_left_down_pressed & !joy1Btn(JOY_BUTTON_LB))
+    if (arm_left_down_pressed & !joy2btn(JOY_BUTTON_LB))
     {
       // set move target of left arm
       if (timer_left_arm<BUTTON_CLICK_DELAY)
@@ -412,7 +372,7 @@ while(true){
     };
 
     // LEFT ARM UP
-	  if(joy1Btn(JOY_BUTTON_LT)  & (arm_left_pos<ARM_LEFT_MAX))
+	  if(joy2Btn(JOY_BUTTON_LT)  & (arm_left_pos<ARM_LEFT_MAX))
 	  {
 	    arm_left_up_pressed=true;
 	    arm_left_moving_up_to_target=false;
@@ -430,7 +390,7 @@ while(true){
 		  	//	hand_left_gua();
 		  };
 	  }
-	  else if(joy1Btn(JOY_BUTTON_LB) & (arm_left_pos>ARM_LEFT_MIN))  // LEFT ARM DOWN
+	  else if(joy2Btn(JOY_BUTTON_LB) & (arm_left_pos>ARM_LEFT_MIN))  // LEFT ARM DOWN
 	  {
 	    arm_left_down_pressed=true;
 	    arm_left_moving_up_to_target=false;
@@ -478,11 +438,11 @@ while(true){
     };
 
 
-    if ((!arm_right_up_pressed) & !joy1Btn(JOY_BUTTON_RT)
-      & (!arm_right_down_pressed) & !joy1Btn(JOY_BUTTON_RB))  // detect click
+    if ((!arm_right_up_pressed) & !joy2btn(JOY_BUTTON_RT)
+      & (!arm_right_down_pressed) & !joy2btn(JOY_BUTTON_RB))  // detect click
       timer_right_arm=0;
 
-    if (arm_right_up_pressed & !joy1Btn(JOY_BUTTON_RT))
+    if (arm_right_up_pressed & !joy2Btn(JOY_BUTTON_RT))
     {
       // set move target of right arm
       if (timer_right_arm<BUTTON_CLICK_DELAY)
@@ -490,7 +450,7 @@ while(true){
       arm_right_up_pressed=false;
     };
 
-    if (arm_right_down_pressed & !joy1Btn(JOY_BUTTON_RB))
+    if (arm_right_down_pressed & !joy2Btn(JOY_BUTTON_RB))
     {
       // set move target of right arm
       if (timer_right_arm<BUTTON_CLICK_DELAY)
@@ -499,7 +459,7 @@ while(true){
     };
 
 
-    if(joy1Btn(JOY_BUTTON_RT) & (arm_right_pos<ARM_RIGHT_MAX))    // RIGHT ARM UP
+    if(joy2btn(JOY_BUTTON_RT) & (arm_right_pos<ARM_RIGHT_MAX))    // RIGHT ARM UP
     {
 	    arm_right_up_pressed=true;
 	    arm_right_moving_up_to_target=false;
@@ -517,7 +477,7 @@ while(true){
 		  	//	hand_right_gua();
 		  };
 	  }
-	  else if(joy1Btn(JOY_BUTTON_RB) & (arm_right_pos>ARM_RIGHT_MIN))   // RIGHT ARM DOWN
+	  else if(joy2btn(JOY_BUTTON_RB) & (arm_right_pos>ARM_RIGHT_MIN))   // RIGHT ARM DOWN
 	  {
 	    arm_right_down_pressed=true;
 	    arm_right_moving_up_to_target=false;

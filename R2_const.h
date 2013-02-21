@@ -39,21 +39,21 @@ const int ARM_CLIP_PARK    = 1;
 const int ARM_CLIP_RELEASE = 2;
 const int ARM_CLIP_CLIP    = 3;
 
-const int ARM_CLIP_PARK_ANG     = 140;
+const int ARM_CLIP_PARK_ANG     = 170;
 const int ARM_CLIP_RELEASE_ANG  = 90;
 const int ARM_CLIP_CLIP_ANG     = 0;
 
 const int FLAPPER_ANG = 90;
-const int FLAPPER_SPEED = 75;
+const int FLAPPER_SPEED = -100;
 
 
 const int ARM_LEFT_MIN=10;
-const int ARM_LEFT_MAX=2200;
+const int ARM_LEFT_MAX=2100;
 const int ARM_LEFT_SAFE_POS=500;
 const int ARM_LEFT_OPEN_POS=1000;
 
 const int ARM_RIGHT_MIN=10;
-const int ARM_RIGHT_MAX=2200;
+const int ARM_RIGHT_MAX=2100;
 const int ARM_RIGHT_SAFE_POS=500;
 const int ARM_RIGHT_OPEN_POS=1000;
 
