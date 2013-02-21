@@ -388,20 +388,20 @@ task main()
     };
 
     // LEFT ARM UP
-	  if(joy2Btn(JOY_BUTTON_LT)  & (arm_left_pos<ARM_LEFT_MAX))
+	  if(joystick.joy2_y1>5  & (arm_left_pos<ARM_LEFT_MAX))
 	  {
 	    arm_left_up_pressed=true;
 	    arm_left_moving_up_to_target=false;
 	    arm_left_moving_down_to_target=false;
-	  	arm_speed=100;
+	  	arm_speed=round(joystick.joy2_y1/128*100);
 			arm_left_up(arm_speed);
 	  }
-	  else if(joy2Btn(JOY_BUTTON_LB) & (arm_left_pos>ARM_LEFT_MIN))  // LEFT ARM DOWN
+	  else if(joystick.joy2_y1<-5 & (arm_left_pos>ARM_LEFT_MIN))  // LEFT ARM DOWN
 	  {
 	    arm_left_down_pressed=true;
 	    arm_left_moving_up_to_target=false;
 	    arm_left_moving_down_to_target=false;
-		 	arm_speed=50;
+	  	arm_speed=-round(joystick.joy2_y1/128*100);
 	  	if (!is_arm_left_touch_bottom())
 				arm_left_down(arm_speed);
 			else
@@ -433,14 +433,14 @@ task main()
     };
 
 
-    if (joy2Btn(JOY_BUTTON_B) & joy2Btn(JOY_BUTTON_RT))
+    if (joy2Btn(JOY_BUTTON_RT))
     {
       // set move target of right arm
       if (!arm_right_moving_up_to_target)
         right_arm_move_up_one_level();
     };
 
-    if (joy2Btn(JOY_BUTTON_B)  & joy2Btn(JOY_BUTTON_RB))
+    if (joy2Btn(JOY_BUTTON_RB))
     {
       // set move target of right arm
       if (!arm_right_moving_down_to_target)
@@ -448,20 +448,20 @@ task main()
     };
 
 
-    if(joy2btn(JOY_BUTTON_RT) & (arm_right_pos<ARM_RIGHT_MAX))    // RIGHT ARM UP
+    if((joystick.joy2_y2>5) & (arm_right_pos<ARM_RIGHT_MAX))    // RIGHT ARM UP
     {
 	    arm_right_up_pressed=true;
 	    arm_right_moving_up_to_target=false;
 	    arm_right_moving_down_to_target=false;
-	  	arm_speed=100;
+	  	arm_speed=round(joystick.joy2_y2/128*100);
 	  	arm_right_up(arm_speed);
 	  }
-	  else if(joy2btn(JOY_BUTTON_RB) & (arm_right_pos>ARM_RIGHT_MIN))   // RIGHT ARM DOWN
+	  else if((joystick.joy2_y2<-5) & (arm_right_pos>ARM_RIGHT_MIN))   // RIGHT ARM DOWN
 	  {
 	    arm_right_down_pressed=true;
 	    arm_right_moving_up_to_target=false;
 	    arm_right_moving_down_to_target=false;
- 	  	arm_speed=50;
+	  	arm_speed=-round(joystick.joy2_y2/128*100);
 	  	if (!is_arm_right_touch_bottom())
 				arm_right_down(arm_speed);
 			else
