@@ -391,7 +391,7 @@ task main()
       }
       else
       {
-        if (timer_flipping>5                                                                               00)
+        if (timer_flipping>500)
         {
           flipper_down();
           timer_flipping=0;
