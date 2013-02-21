@@ -210,6 +210,11 @@ void arm_pickup_clip ()
 {
 	servo_clip_left_MoveToDeg(ARM_CLIP_CLIP_ANG, SERVO_SPEED_NORMAL);
 	servo_clip_right_MoveToDeg(ARM_CLIP_CLIP_ANG, SERVO_SPEED_NORMAL);
+  nMotorEncoderTarget[nxtmotor_flapper_left] = FLAPPER_ANG;
+  nMotorEncoderTarget[nxtmotor_flapper_right] = FLAPPER_ANG;
+  motor[nxtmotor_flapper_left] = FLAPPER_SPEED;
+  motor[nxtmotor_flapper_right] = FLAPPER_SPEED;
+
 	arm_clip_pos=ARM_CLIP_CLIP;
 
 }
@@ -217,6 +222,10 @@ void arm_pickup_release ()
 {
   servo_clip_left_MoveToDeg(ARM_CLIP_RELEASE_ANG, SERVO_SPEED_NORMAL);
   servo_clip_right_MoveToDeg(ARM_CLIP_RELEASE_ANG, SERVO_SPEED_NORMAL);
+  nMotorEncoderTarget[nxtmotor_flapper_left] = FLAPPER_ANG;
+  nMotorEncoderTarget[nxtmotor_flapper_right] = FLAPPER_ANG;
+  motor[nxtmotor_flapper_left] = -FLAPPER_SPEED;
+  motor[nxtmotor_flapper_right] = -FLAPPER_SPEED;
 	arm_clip_pos=ARM_CLIP_RELEASE;
 }
 
@@ -306,7 +315,6 @@ void hand_right_jie (){
   servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_JIE_ANG, SERVO_SPEED_SLOW);
   servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_JIE_ANG, SERVO_SPEED_SLOW);
   right_hand_pos= HAND_JIE;
-
 }
 
 bool is_arm_right_touch_bottom(){

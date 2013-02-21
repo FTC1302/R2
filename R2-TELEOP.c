@@ -2,14 +2,16 @@
 #pragma config(Sensor, S2,     sensor_arm_left_angle, sensorI2CCustom)
 #pragma config(Sensor, S3,     sensor_arm_right_angle, sensorI2CCustom)
 #pragma config(Sensor, S4,     HTSPB,          sensorI2CCustom9V)
+#pragma config(Motor,  motorA,          nxtmotor_flapper_left,     tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  motorB,          nxtmotor_flapper_right,    tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  mtr_S1_C1_1,     drive_motor_1, tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C1_2,     drive_motor_2, tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C2_1,     arm_motor_left, tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C2_2,     arm_motor_right, tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_1,     drive_motor_3, tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_2,     drive_motor_4, tmotorTetrix, openLoop)
-#pragma config(Servo,  srvo_S1_C4_1,    servo_clip_right,      tServoStandard)
-#pragma config(Servo,  srvo_S1_C4_2,    servo_clip_left,     tServoStandard)
+#pragma config(Servo,  srvo_S1_C4_1,    servo_clip_right,     tServoStandard)
+#pragma config(Servo,  srvo_S1_C4_2,    servo_clip_left,      tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_3,    servo_left_hand_bottom, tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_4,    servo_left_hand_top,  tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_5,    servo_right_hand_bottom, tServoStandard)
@@ -78,6 +80,13 @@ void init()
 {
 	RunAt(0, 0, 0);
 
+  motor[nxtmotor_flapper_left] = 0;                // reset the Motor Encoder of Motor B
+  motor[nxtmotor_flapper_right] = 0;                // reset the Motor Encoder of Motor C
+
+	nMotorEncoder[nxtmotor_flapper_left] = 0;                // reset the Motor Encoder of Motor B
+  nMotorEncoder[nxtmotor_flapper_right] = 0;                // reset the Motor Encoder of Motor C
+
+
 	arm_pickup_park();
 	hand_left_jie();
   hand_right_jie();
@@ -103,14 +112,17 @@ void init()
 void init_arm_pos()
 {
 	bool arm_left_touch_bottom, arm_right_touch_bottom;
-	while(true)
+  while(true)
 	{
+	  break;
 		arm_left_touch_bottom=is_arm_left_touch_bottom();
 		arm_right_touch_bottom=is_arm_right_touch_bottom();
 
 		if (arm_left_touch_bottom & arm_right_touch_bottom)
 			break;
-
+		if ((!arm_left_touch_bottom) || (!arm_right_touch_bottom))
+      PlaySound(soundBlip);
+		/*
 		if (!arm_left_touch_bottom)
 			arm_left_down(10);
 		else
@@ -120,6 +132,7 @@ void init_arm_pos()
 			arm_right_down(10);
 		else
 			arm_right_stop();
+		*/
 	};
 	reset_angle_sensor();
 
@@ -129,6 +142,35 @@ void init_arm_pos()
 
 task main()
 {
+  /*
+  int a=1;
+  nMotorEncoder[nxtmotor_flapper_left] = 0;  //clear the LEGO motor encoders
+  nMotorEncoder[nxtmotor_flapper_right] = 0;
+while(true){
+  nMotorEncoderTarget[nxtmotor_flapper_left] = FLAPPER_ANG; //set the target stoping position
+  nMotorEncoderTarget[nxtmotor_flapper_right] = FLAPPER_ANG;
+
+  motor[nxtmotor_flapper_left] = a*FLAPPER_SPEED; //turn both motors on at 30 percent power
+  motor[nxtmotor_flapper_right] = a*FLAPPER_SPEED;
+  a=-a;
+
+  while (nMotorRunState[nxtmotor_flapper_left] != runStateIdle || nMotorRunState[nxtmotor_flapper_right] != runStateIdle) //while the encoder wheel turns one revolution
+  {
+    // This condition waits for motors B + C to come to an idle position. Both motors stop
+    // and then jumps out of the loop
+  }
+
+  motor[nxtmotor_flapper_left] = 0; //turn both motors off
+  motor[nxtmotor_flapper_right] = 0;
+
+  wait1Msec(1000);  // wait 3 seconds to see feedback on the debugger screens
+                    // open the "NXT Devices" window to see the distance the encoder spins.
+                    // the robot will come to a stop at the nMotorEncoderTarget position.
+};
+
+
+  wait1Msec(10000);
+  */
    // all code will be ignored when joystick in stop mode
   getJoystickSettings(joystick);
   while (joystick.StopPgm)
@@ -199,7 +241,7 @@ task main()
 	    if (abs(joystick.joy1_y2)<100) // ignore conflict with turbo speed
 	    {
 		    x=joystick.joy1_x2;
-		    if (abs(x)>3)
+		    if (abs(x)>JOYSTICK_ERROR)
 		      ang = round((x/128.0)*30);
 		  };
 
@@ -208,7 +250,7 @@ task main()
 	    x=round(x/128.0*100);
 	    y=round(y/128.0*100);
 
-	    if ((abs(x)<3) & (abs(y)<3) & (abs(ang)==0))
+	    if ((abs(x)<JOYSTICK_ERROR) & (abs(y)<JOYSTICK_ERROR) & (abs(ang)==0))
 	    {
 	      int speed=40;
 	      if (joystick.joy1_y2>100) speed=80;
@@ -322,6 +364,12 @@ task main()
 		  servo_clip_left_MoveToDeg(ARM_CLIP_RELEASE_ANG-round(get_left_ring_weight()/400.0*90), SERVO_SPEED_NORMAL);
 		  servo_clip_right_MoveToDeg(ARM_CLIP_RELEASE_ANG-round(get_right_ring_weight()/400.0*90), SERVO_SPEED_NORMAL);
     };
+
+    if (nMotorRunState[nxtmotor_flapper_left] == runStateIdle )
+       motor[nxtmotor_flapper_left] = 0;
+
+    if (nMotorRunState[nxtmotor_flapper_right] == runStateIdle )
+       motor[nxtmotor_flapper_right] = 0;
 
     if(joy1Btn(JOY_BUTTON_A))
     {

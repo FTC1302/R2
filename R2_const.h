@@ -17,6 +17,9 @@ const int JOY_BUTTON_TOPHAT_DOWN_LEFT= 5;
 const int JOY_BUTTON_TOPHAT_LEFT= 6;
 const int JOY_BUTTON_TOPHAT_UP_LEFT= 7;
 
+const int JOYSTICK_ERROR=5;
+
+
 const int BUTTON_CLICK_DELAY=300;
 
 const int HAND_LEFT_TOP_JIE_ANG=115;
@@ -40,6 +43,8 @@ const int ARM_CLIP_PARK_ANG     = 140;
 const int ARM_CLIP_RELEASE_ANG  = 90;
 const int ARM_CLIP_CLIP_ANG     = 0;
 
+const int FLAPPER_ANG = 90;
+const int FLAPPER_SPEED = 75;
 
 
 const int ARM_LEFT_MIN=10;
