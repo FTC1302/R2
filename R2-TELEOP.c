@@ -27,7 +27,7 @@
 // Global Variable for Robot
 int arm_left_pos  = 0;
 int arm_right_pos = 0;
-int arm_left_target = ARM_TARGET_NONE;
+int arm_left_target  = ARM_TARGET_NONE;
 int arm_right_target = ARM_TARGET_NONE;
 bool arm_left_moving_up_to_target    = false;
 bool arm_left_moving_down_to_target  = false;
@@ -40,6 +40,7 @@ bool arm_right_up_pressed   = false;
 bool arm_right_down_pressed = false;
 
 int arm_clip_pos = ARM_CLIP_PARK;
+int flipper_pos = FLIPPER_DOWN;
 
 int sensor_IR=sensor_arm_left_angle;
 
@@ -54,6 +55,7 @@ int timer_right_arm;
 int timer_protect_left_move;
 int timer_protect_right_move;
 int timer_o_c_hand;
+int timer_flipping;
 
 
 #include <JoystickDriver.c>
@@ -176,7 +178,7 @@ task main()
     timer_protect_left_move=timer_protect_left_move+t;
     timer_protect_right_move=timer_protect_right_move+t;
     timer_o_c_hand=timer_o_c_hand+t;
-
+    timer_flipping=timer_flipping+t;
   	// process angle sensor
   	arm_left_pos=get_arm_left_pos();
   	arm_right_pos=get_arm_right_pos();
@@ -200,7 +202,7 @@ task main()
 
 	    if (abs(joystick.joy1_y2)<100) // ignore conflict with turbo speed
 	    {
-		    x=joystick.joy1_x2;
+		    x=-joystick.joy1_x2;
 		    if (abs(x)>JOYSTICK_ERROR)
 		      ang = round((x/128.0)*30);
 		  };
@@ -351,24 +353,38 @@ task main()
       };
     };
 
-    if ((!arm_left_up_pressed) & !joy2btn(JOY_BUTTON_LT)
-      & (!arm_left_down_pressed) & !joy2btn(JOY_BUTTON_LB))  // detect click
-      timer_left_arm=0;
-
-    if (arm_left_up_pressed & !joy2btn(JOY_BUTTON_LT))
+    if(joy1Btn(JOY_BUTTON_Y))
     {
-      // set move target of left arm
-      if (timer_left_arm<BUTTON_CLICK_DELAY)
-        left_arm_move_up_one_level();
-      arm_left_up_pressed=false;
+      if ((flipper_pos==FLIPPER_DOWN))
+      {
+        if (timer_flipping>1000)
+        {
+        	flipper_up();
+          timer_flipping=0;
+        }
+      }
+      else
+      {
+        if (timer_flipping>1000)
+        {
+          flipper_down();
+          timer_flipping=0;
+        };
+      };
     };
 
-    if (arm_left_down_pressed & !joy2btn(JOY_BUTTON_LB))
+    if (joy2Btn(JOY_BUTTON_B) & joy2btn(JOY_BUTTON_LT))
     {
       // set move target of left arm
-      if (timer_left_arm<BUTTON_CLICK_DELAY)
+      if (!arm_left_moving_up_to_target)
+        left_arm_move_up_one_level();
+    };
+
+    if (joy2Btn(JOY_BUTTON_B) & joy2btn(JOY_BUTTON_LB))
+    {
+      // set move target of left arm
+      if (!arm_left_moving_down_to_target)
         left_arm_move_down_one_level();
-      arm_left_down_pressed=false;
     };
 
     // LEFT ARM UP
@@ -377,40 +393,19 @@ task main()
 	    arm_left_up_pressed=true;
 	    arm_left_moving_up_to_target=false;
 	    arm_left_moving_down_to_target=false;
-	    if (timer_left_arm>BUTTON_CLICK_DELAY)
-	    {
-		  	arm_speed=100;
-		  	if ((ARM_LEFT_MAX-arm_left_pos)<500) motor[arm_motor_left]=40;
-		  	if ((ARM_LEFT_MAX-arm_left_pos)<400) motor[arm_motor_left]=30;
-		  	if ((ARM_LEFT_MAX-arm_left_pos)<300) motor[arm_motor_left]=20;
-		  	if ((ARM_LEFT_MAX-arm_left_pos)<200) motor[arm_motor_left]=10;
-				arm_left_up(arm_speed);
-
-		  	//if ((left_hand_pos == HAND_JIE) & (arm_left_pos>ARM_LEFT_OPEN_POS)) disable hand auto open
-		  	//	hand_left_gua();
-		  };
+	  	arm_speed=100;
+			arm_left_up(arm_speed);
 	  }
 	  else if(joy2Btn(JOY_BUTTON_LB) & (arm_left_pos>ARM_LEFT_MIN))  // LEFT ARM DOWN
 	  {
 	    arm_left_down_pressed=true;
 	    arm_left_moving_up_to_target=false;
 	    arm_left_moving_down_to_target=false;
-	    if (timer_left_arm>BUTTON_CLICK_DELAY)
-	    {
-		  	arm_speed=50;
-		  	if ((arm_left_pos-ARM_LEFT_MIN)<500) motor[arm_motor_left]=20;
-		  	if ((arm_left_pos-ARM_LEFT_MIN)<400) motor[arm_motor_left]=15;
-		  	if ((arm_left_pos-ARM_LEFT_MIN)<300) motor[arm_motor_left]=10;
-		  	if ((arm_left_pos-ARM_LEFT_MIN)<200) motor[arm_motor_left]=10;
-
-		  	//if ((left_hand_pos == HAND_GUA) & (arm_left_pos<ARM_LEFT_SAFE_POS+200))
-		  	//	hand_left_jie();
-
-		  	if (!is_arm_left_touch_bottom())
-					arm_left_down(arm_speed);
-				else
-					arm_left_stop();
-		  };
+		 	arm_speed=50;
+	  	if (!is_arm_left_touch_bottom())
+				arm_left_down(arm_speed);
+			else
+				arm_left_stop();
     }
     else
 			arm_left_stop();
@@ -418,7 +413,7 @@ task main()
     if (arm_left_moving_up_to_target)
     {
       if (arm_left_pos<arm_left_target)
-		  	arm_left_up(50);
+		  	arm_left_up(100);
       else
       {
         arm_left_stop();
@@ -438,24 +433,18 @@ task main()
     };
 
 
-    if ((!arm_right_up_pressed) & !joy2btn(JOY_BUTTON_RT)
-      & (!arm_right_down_pressed) & !joy2btn(JOY_BUTTON_RB))  // detect click
-      timer_right_arm=0;
-
-    if (arm_right_up_pressed & !joy2Btn(JOY_BUTTON_RT))
+    if (joy2Btn(JOY_BUTTON_B) & joy2Btn(JOY_BUTTON_RT))
     {
       // set move target of right arm
-      if (timer_right_arm<BUTTON_CLICK_DELAY)
+      if (!arm_right_moving_up_to_target)
         right_arm_move_up_one_level();
-      arm_right_up_pressed=false;
     };
 
-    if (arm_right_down_pressed & !joy2Btn(JOY_BUTTON_RB))
+    if (joy2Btn(JOY_BUTTON_B)  & joy2Btn(JOY_BUTTON_RB))
     {
       // set move target of right arm
-      if (timer_right_arm<BUTTON_CLICK_DELAY)
+      if (!arm_right_moving_down_to_target)
         right_arm_move_down_one_level();
-      arm_right_down_pressed=false;
     };
 
 
@@ -464,40 +453,19 @@ task main()
 	    arm_right_up_pressed=true;
 	    arm_right_moving_up_to_target=false;
 	    arm_right_moving_down_to_target=false;
-	    if (timer_right_arm>BUTTON_CLICK_DELAY)
-	    {
-		  	arm_speed=100;
-		  	if ((ARM_RIGHT_MAX-arm_right_pos)<500) motor[arm_motor_right]=40;
-		  	if ((ARM_RIGHT_MAX-arm_right_pos)<400) motor[arm_motor_right]=30;
-		  	if ((ARM_RIGHT_MAX-arm_right_pos)<300) motor[arm_motor_right]=20;
-		  	if ((ARM_RIGHT_MAX-arm_right_pos)<200) motor[arm_motor_right]=10;
-		  	arm_right_up(arm_speed);
-
-		  	//if ((right_hand_pos == HAND_JIE) & (arm_right_pos>ARM_RIGHT_OPEN_POS+200))
-		  	//	hand_right_gua();
-		  };
+	  	arm_speed=100;
+	  	arm_right_up(arm_speed);
 	  }
 	  else if(joy2btn(JOY_BUTTON_RB) & (arm_right_pos>ARM_RIGHT_MIN))   // RIGHT ARM DOWN
 	  {
 	    arm_right_down_pressed=true;
 	    arm_right_moving_up_to_target=false;
 	    arm_right_moving_down_to_target=false;
-	    if (timer_right_arm>BUTTON_CLICK_DELAY)
-	    {
-	 	  	arm_speed=50;
-		  	if ((arm_right_pos-ARM_RIGHT_MIN)<500) motor[arm_motor_right]=20;
-		  	if ((arm_right_pos-ARM_RIGHT_MIN)<400) motor[arm_motor_right]=15;
-		  	if ((arm_right_pos-ARM_RIGHT_MIN)<300) motor[arm_motor_right]=15;
-		  	if ((arm_right_pos-ARM_RIGHT_MIN)<200) motor[arm_motor_right]=10;
-
-		  	//if ((right_hand_pos == HAND_GUA) & (arm_right_pos<ARM_RIGHT_SAFE_POS))
-		  	//	hand_right_jie();
-
-		  	if (!is_arm_right_touch_bottom())
-					arm_right_down(arm_speed);
-				else
-					arm_right_stop();
-		  };
+ 	  	arm_speed=50;
+	  	if (!is_arm_right_touch_bottom())
+				arm_right_down(arm_speed);
+			else
+				arm_right_stop();
     }
     else
 			arm_right_stop();

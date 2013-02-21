@@ -38,6 +38,67 @@ R2操作方法：
 
 R2开机会先播放音乐声，然后将左右机械手置于接圈位置，取圈臂置于停机位置，然后等待两秒钟，等待伺服电机就位后，左右机械臂向下运动，直到左右触碰开关都被压住。这时的位置作为机械臂的起始位置，到位后发出“嘟嘟”声。
 
+操作
+----
+手柄1//驾驶及取圈
+
+	X	逆时针旋转
+
+	B	逆时针旋转
+
+	A	取圈臂夹/放
+
+	Y	翻板反转
+
+	LB
+
+	LT
+
+	RB
+
+	RT
+
+	J1(左)	全向运动控制
+
+	J1_CLICK
+
+	J2(右)	X方向控制旋转,Y方向推到头是加速TOPHAT运动。
+
+	J2_CLICK
+
+	TOPHAT	全向运动，速度为60
+
+
+
+手柄2//挂圈
+
+	X	逆时针旋转
+
+	B	逆时针旋转
+
+	A	取圈臂夹/放
+
+	Y	翻板反转
+
+	LB	左机械臂向下一层
+
+	LT	左机械臂向上一层
+
+	RB	右机械臂向下一层
+
+	RT	右机械臂向上一层
+
+	J1(左)	Y方向控制左机械臂上下
+
+	J1_CLICK
+
+	J2(右)	Y方向控制右机械臂上下
+
+	J2_CLICK
+
+	TOPHAT	全向运动，速度为60
+
+
 
 
 端口定义：
@@ -66,24 +127,24 @@ R2开机会先播放音乐声，然后将左右机械手置于接圈位置，取
 ==================
 ```C
 //游戏手柄常数，感谢罗罗的耐心和细心，把混乱的手柄代码搞清楚了。
-const int JOY_BUTTON_X=01;
-const int JOY_BUTTON_A=02;
-const int JOY_BUTTON_B=03;
-const int JOY_BUTTON_Y=04;
-const int JOY_BUTTON_LB=05;
-const int JOY_BUTTON_RB=06;
-const int JOY_BUTTON_LT=07;
-const int JOY_BUTTON_RT=08;
-const int JOY_BUTTON_J1_CLICK=11;
-const int JOY_BUTTON_J2_CLICK=12;
-const int JOY_BUTTON_TOPHAT_UP= 0;
-const int JOY_BUTTON_TOPHAT_UP_RIGHT= 1;
-const int JOY_BUTTON_TOPHAT_RIGHT= 2;
-const int JOY_BUTTON_TOPHAT_DOWN_RIGHT= 3;
-const int JOY_BUTTON_TOPHAT_DOWN= 4;
-const int JOY_BUTTON_TOPHAT_DOWN_LEFT= 5;
-const int JOY_BUTTON_TOPHAT_LEFT= 6;
-const int JOY_BUTTON_TOPHAT_UP_LEFT= 7;
+X=01;
+A=02;
+B=03;
+Y=04;
+LB=05;
+RB=06;
+LT=07;
+RT=08;
+J1_CLICK=11;
+J2_CLICK=12;
+TOPHAT_UP= 0;
+TOPHAT_UP_RIGHT= 1;
+TOPHAT_RIGHT= 2;
+TOPHAT_DOWN_RIGHT= 3;
+TOPHAT_DOWN= 4;
+TOPHAT_DOWN_LEFT= 5;
+TOPHAT_LEFT= 6;
+TOPHAT_UP_LEFT= 7;
 
 //检测按钮“点击”（注意不是“按住”）的时间定义，这里定义的是300毫秒以内的算“点击”
 const int BUTTON_CLICK_DELAY=300;

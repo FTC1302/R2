@@ -210,23 +210,27 @@ void arm_pickup_clip ()
 {
 	servo_clip_left_MoveToDeg(ARM_CLIP_CLIP_ANG, SERVO_SPEED_NORMAL);
 	servo_clip_right_MoveToDeg(ARM_CLIP_CLIP_ANG, SERVO_SPEED_NORMAL);
-  nMotorEncoderTarget[nxtmotor_flapper_left] = FLAPPER_ANG;
-  nMotorEncoderTarget[nxtmotor_flapper_right] = FLAPPER_ANG;
-  motor[nxtmotor_flapper_left] = FLAPPER_SPEED;
-  motor[nxtmotor_flapper_right] = FLAPPER_SPEED;
-
 	arm_clip_pos=ARM_CLIP_CLIP;
-
 }
 void arm_pickup_release ()
 {
   servo_clip_left_MoveToDeg(ARM_CLIP_RELEASE_ANG, SERVO_SPEED_NORMAL);
   servo_clip_right_MoveToDeg(ARM_CLIP_RELEASE_ANG, SERVO_SPEED_NORMAL);
+	arm_clip_pos=ARM_CLIP_RELEASE;
+}
+
+void flipper_down(){
+  nMotorEncoderTarget[nxtmotor_flapper_left] = FLAPPER_ANG;
+  nMotorEncoderTarget[nxtmotor_flapper_right] = FLAPPER_ANG;
+  motor[nxtmotor_flapper_left] = FLAPPER_SPEED;
+  motor[nxtmotor_flapper_right] = FLAPPER_SPEED;
+}
+
+void flipper_up(){
   nMotorEncoderTarget[nxtmotor_flapper_left] = FLAPPER_ANG;
   nMotorEncoderTarget[nxtmotor_flapper_right] = FLAPPER_ANG;
   motor[nxtmotor_flapper_left] = -FLAPPER_SPEED;
   motor[nxtmotor_flapper_right] = -FLAPPER_SPEED;
-	arm_clip_pos=ARM_CLIP_RELEASE;
 }
 
 void arm_left_stop(){
