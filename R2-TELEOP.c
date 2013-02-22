@@ -1,15 +1,16 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
+#pragma config(Sensor, S1,     error,   sensorTouch)
 #pragma config(Sensor, S2,     sensor_arm_left_angle, sensorI2CCustom)
 #pragma config(Sensor, S3,     sensor_arm_right_angle, sensorI2CCustom)
 #pragma config(Sensor, S4,     HTSPB,          sensorI2CCustom9V)
 #pragma config(Motor,  motorA,          nxtmotor_flapper_left,     tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorB,          nxtmotor_flapper_right,    tmotorNXT, PIDControl, encoder)
-#pragma config(Motor,  mtr_S1_C1_1,     drive_motor_1, tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C1_2,     drive_motor_2, tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C2_1,     arm_motor_left, tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C2_2,     arm_motor_right, tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_1,     drive_motor_3, tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_2,     drive_motor_4, tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_1,     drive_motor_1, tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_2,     drive_motor_2, tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C1_1,     arm_motor_left, tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C1_2,     arm_motor_right, tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C2_1,     drive_motor_3, tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C2_2,     drive_motor_4, tmotorTetrix, openLoop)
 #pragma config(Servo,  srvo_S1_C4_1,    servo_clip_right,     tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_2,    servo_clip_left,      tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_3,    servo_left_hand_bottom, tServoStandard)
@@ -23,7 +24,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 
 #include "R2_const.h"
-//asdfasdf
+
 // Global Variable for Robot
 int arm_left_pos  = 0;
 int arm_right_pos = 0;
@@ -43,6 +44,7 @@ int arm_clip_pos = ARM_CLIP_PARK;
 int flipper_pos = FLIPPER_DOWN;
 
 int sensor_IR=sensor_arm_left_angle;
+
 
 int left_hand_pos = HAND_JIE;
 int right_hand_pos= HAND_JIE;
@@ -153,6 +155,7 @@ task main()
   {
     PlaySound(soundBlip);
     wait1Msec(200);
+    checkExternalBatt();
     getJoystickSettings(joystick);
   };
 
@@ -239,6 +242,20 @@ task main()
 		}
 		else
 		  RunAt(0, 0, 0);
+
+    // test code for tetrix power off
+    /*
+			void clearI2CError(tSensors link, ubyte address);
+			bool waitForI2CBus(tSensors link);
+			bool writeI2C(tSensors link, tByteArray &request, tByteArray &reply, int replylen);
+			bool writeI2C(tSensors link, tByteArray &request);
+			bool readI2C(tSensors link, tByteArray &data, int replylen);
+    */
+    if ((externalBatteryAvg<0) & (joy1Btn(JOY_BUTTON_LT))
+		{
+		  int aa=SensorValue[error];
+		  PlaySound(soundBeepBeep);
+		};
 
 
     // HAND MICRO MOVE back & forth

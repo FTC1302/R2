@@ -47,6 +47,14 @@ int get_right_ring_weight();
 
 ///////////////////////////////////////////////////////////////////////////////////
 
+void checkExternalBatt(){
+  if (externalBatteryAvg>=0) return;
+  while (externalBatteryAvg<0){
+    PlaySound(soundException);
+    wait1Msec(1000);
+  };
+}
+
 void RunAt(float v_x, float v_y, float ang)  // x, y -1..+1  ang -180..+180
 {
 	float R, A	;
