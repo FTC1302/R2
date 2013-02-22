@@ -1,5 +1,4 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
-#pragma config(Sensor, S1,     error,   sensorTouch)
 #pragma config(Sensor, S2,     sensor_arm_left_angle, sensorI2CCustom)
 #pragma config(Sensor, S3,     sensor_arm_right_angle, sensorI2CCustom)
 #pragma config(Sensor, S4,     HTSPB,          sensorI2CCustom9V)
@@ -242,20 +241,6 @@ task main()
 		}
 		else
 		  RunAt(0, 0, 0);
-
-    // test code for tetrix power off
-    /*
-			void clearI2CError(tSensors link, ubyte address);
-			bool waitForI2CBus(tSensors link);
-			bool writeI2C(tSensors link, tByteArray &request, tByteArray &reply, int replylen);
-			bool writeI2C(tSensors link, tByteArray &request);
-			bool readI2C(tSensors link, tByteArray &data, int replylen);
-    */
-    if ((externalBatteryAvg<0) & (joy1Btn(JOY_BUTTON_LT))
-		{
-		  int aa=SensorValue[error];
-		  PlaySound(soundBeepBeep);
-		};
 
 
     // HAND MICRO MOVE back & forth

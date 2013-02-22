@@ -95,12 +95,12 @@ R2操作方法：
 #pragma config(Sensor, 	S4,     	HTSPB,          	sensorI2CCustom9V)	// 原型板，扩充了两个触碰传感器和左右两个用于称重的压力传感器
 #pragma config(Motor,  motorA,          nxtmotor_flapper_left,     tmotorNXT, PIDControl, encoder) //翻板左侧马达
 #pragma config(Motor,  motorB,          nxtmotor_flapper_right,    tmotorNXT, PIDControl, encoder) //翻板右侧马达
-#pragma config(Motor,  	mtr_S1_C1_1,    drive_motor_1, 		tmotorTetrix, openLoop)	// 运动马达1 【注意】运动马达顺序不能接错，否则全向轮算法会混乱。
-#pragma config(Motor,  	mtr_S1_C1_2,    drive_motor_2, 		tmotorTetrix, openLoop)	// 运动马达2
-#pragma config(Motor,  	mtr_S1_C2_1,    arm_motor_left, 	tmotorTetrix, openLoop)	// 左机械臂驱动马达
-#pragma config(Motor,  	mtr_S1_C2_2,    arm_motor_right, 	tmotorTetrix, openLoop)	// 右机械臂马达
-#pragma config(Motor,  	mtr_S1_C3_1,    drive_motor_3, 		tmotorTetrix, openLoop)	// 运动马达3
-#pragma config(Motor,  	mtr_S1_C3_2,    drive_motor_4, 		tmotorTetrix, openLoop)	// 运动马达4
+#pragma config(Motor,  	mtr_S1_C3_1,    drive_motor_1, 		tmotorTetrix, openLoop)	// 运动马达1 【注意】运动马达顺序不能接错，否则全向轮算法会混乱。
+#pragma config(Motor,  	mtr_S1_C3_2,    drive_motor_2, 		tmotorTetrix, openLoop)	// 运动马达2
+#pragma config(Motor,  	mtr_S1_C1_1,    arm_motor_left, 	tmotorTetrix, openLoop)	// 左机械臂驱动马达
+#pragma config(Motor,  	mtr_S1_C1_2,    arm_motor_right, 	tmotorTetrix, openLoop)	// 右机械臂马达
+#pragma config(Motor,  	mtr_S1_C2_1,    drive_motor_3, 		tmotorTetrix, openLoop)	// 运动马达3
+#pragma config(Motor,  	mtr_S1_C2_2,    drive_motor_4, 		tmotorTetrix, openLoop)	// 运动马达4
 #pragma config(Servo,  	srvo_S1_C4_1,   servo_clip_left,      	tServoStandard)		// 取圈臂左侧伺服电机
 #pragma config(Servo,  	srvo_S1_C4_2,   servo_clip_right,     	tServoStandard)		// 取圈臂右侧伺服电机
 #pragma config(Servo,  	srvo_S1_C4_3,   servo_left_hand_bottom, tServoStandard)		// 左机械手底部伺服电机
