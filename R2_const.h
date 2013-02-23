@@ -36,13 +36,15 @@ const int HAND_JIE = 1;
 const int HAND_GUA = 2;
 
 const int ARM_CLIP_PARK    = 1;
-const int ARM_CLIP_RELEASE = 2;
-const int ARM_CLIP_CLIP    = 3;
+const int ARM_CLIP_HORIZON = 2;
+const int ARM_CLIP_RELEASE = 3;
+const int ARM_CLIP_CLIP    = 4;
 
 const int FLIPPER_UP    = 1;
 const int FLIPPER_DOWN  = 2;
 
 const int ARM_CLIP_PARK_ANG     = 170;
+const int ARM_CLIP_HORIZON_ANG  = 90;
 const int ARM_CLIP_RELEASE_ANG  = 30;
 const int ARM_CLIP_CLIP_ANG     = 0;
 

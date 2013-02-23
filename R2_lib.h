@@ -210,20 +210,26 @@ void servo_right_hand_top_MoveToDeg(float deg, int speed)
 
 void arm_pickup_park ()
 {
-	servo_clip_left_MoveToDeg(ARM_CLIP_PARK_ANG, SERVO_SPEED_VERY_SLOW);
-	servo_clip_right_MoveToDeg(ARM_CLIP_PARK_ANG, SERVO_SPEED_VERY_SLOW);
+	servo_clip_left_MoveToDeg(ARM_CLIP_PARK_ANG, SERVO_SPEED_NORMAL);
+	servo_clip_right_MoveToDeg(ARM_CLIP_PARK_ANG, SERVO_SPEED_NORMAL);
 	arm_clip_pos=ARM_CLIP_PARK;
+}
+void arm_pickup_horizon ()
+{
+	servo_clip_left_MoveToDeg(ARM_CLIP_HORIZON_ANG, SERVO_SPEED_VERY_FAST);
+	servo_clip_right_MoveToDeg(ARM_CLIP_HORIZON_ANG, SERVO_SPEED_VERY_FAST);
+	arm_clip_pos=ARM_CLIP_ARM_CLIP_HORIZON;
 }
 void arm_pickup_clip ()
 {
-	servo_clip_left_MoveToDeg(ARM_CLIP_CLIP_ANG, SERVO_SPEED_NORMAL);
-	servo_clip_right_MoveToDeg(ARM_CLIP_CLIP_ANG, SERVO_SPEED_NORMAL);
+	servo_clip_left_MoveToDeg(ARM_CLIP_CLIP_ANG, SERVO_SPEED_FAST);
+	servo_clip_right_MoveToDeg(ARM_CLIP_CLIP_ANG, SERVO_SPEED_FAST);
 	arm_clip_pos=ARM_CLIP_CLIP;
 }
 void arm_pickup_release ()
 {
-  servo_clip_left_MoveToDeg(ARM_CLIP_RELEASE_ANG, SERVO_SPEED_NORMAL);
-  servo_clip_right_MoveToDeg(ARM_CLIP_RELEASE_ANG, SERVO_SPEED_NORMAL);
+  servo_clip_left_MoveToDeg(ARM_CLIP_RELEASE_ANG, SERVO_SPEED_VERY_FAST);
+  servo_clip_right_MoveToDeg(ARM_CLIP_RELEASE_ANG, SERVO_SPEED_VERY_FAST);
 	arm_clip_pos=ARM_CLIP_RELEASE;
 }
 

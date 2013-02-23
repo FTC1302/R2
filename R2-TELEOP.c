@@ -349,10 +349,10 @@ task main()
 
 
     // clip arm control
-    if ((arm_clip_pos==ARM_CLIP_RELEASE) & (time1[timer_clipping]>1000))  // weighting
+    if ((arm_clip_pos==ARM_CLIP_HORIZON) & (time1[timer_clipping]>1000))  // weighting
     {
-		  servo_clip_left_MoveToDeg(ARM_CLIP_RELEASE_ANG-round(get_left_ring_weight()/400.0*90), SERVO_SPEED_NORMAL);
-		  servo_clip_right_MoveToDeg(ARM_CLIP_RELEASE_ANG-round(get_right_ring_weight()/400.0*90), SERVO_SPEED_NORMAL);
+		  servo_clip_left_MoveToDeg(ARM_CLIP_HORIZON_ANG-round(get_left_ring_weight()/400.0*60), SERVO_SPEED_NORMAL);
+		  servo_clip_right_MoveToDeg(ARM_CLIP_HORIZON_ANG-round(get_right_ring_weight()/400.0*60), SERVO_SPEED_NORMAL);
     };
 
     if (nMotorRunState[nxtmotor_flapper_left] == runStateIdle )
@@ -361,9 +361,13 @@ task main()
     if (nMotorRunState[nxtmotor_flapper_right] == runStateIdle )
        motor[nxtmotor_flapper_right] = 0;
 
-    if(joy1Btn(JOY_BUTTON_A))
+    if(joy1Btn(JOY_BUTTON_RT))
     {
-      if ((arm_clip_pos==ARM_CLIP_RELEASE) || (arm_clip_pos==ARM_CLIP_PARK))
+      arm_pickup_horizon ();
+    }
+    else if(joy1Btn(JOY_BUTTON_A))
+    {
+      if ((arm_clip_pos==ARM_CLIP_RELEASE) || (arm_clip_pos==ARM_CLIP_HORIZON)|| (arm_clip_pos==ARM_CLIP_PARK))
       {
         if (time1[timer_clipping]>1000)
         {
