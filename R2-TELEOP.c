@@ -45,8 +45,10 @@ int flipper_pos = FLIPPER_DOWN;
 int sensor_IR=sensor_arm_left_angle;
 
 
-int left_hand_pos = HAND_JIE;
-int right_hand_pos= HAND_JIE;
+int left_hand_bottom_pos  = HAND_CLOSE;
+int left_hand_upper_pos   = HAND_UP;
+int right_hand_bottom_pos = HAND_CLOSE;
+int right_hand_upper_pos  = HAND_UP;
 TTimers timer_left_hand_roll  = T1;
 TTimers timer_right_hand_roll = T2;
 TTimers timer_clipping = T3;
@@ -57,6 +59,8 @@ int timer_protect_left_move;
 int timer_protect_right_move;
 int timer_o_c_hand;
 int timer_flipping;
+int timer_JOY2_BUTTON_X;
+int timer_JOY2_BUTTON_B;
 
 
 #include <JoystickDriver.c>
@@ -91,8 +95,7 @@ void init()
 
 
 	arm_pickup_park();
-	hand_left_jie();
-  hand_right_jie();
+	hand_all_close();
 
   init_IR_sensor();
   init_prototype_board();
@@ -105,6 +108,8 @@ void init()
   timer_protect_left_move=0;
   timer_protect_right_move=0;
   timer_o_c_hand=0;
+  timer_JOY2_BUTTON_X=0;
+  timer_JOY2_BUTTON_B=0;
 
   ClearTimer(timer_left_hand_roll);
 	ClearTimer(timer_right_hand_roll);
@@ -158,10 +163,7 @@ task main()
     getJoystickSettings(joystick);
   };
 
-  int x, y, ang, x1, x2, y1, y2;
-
-	int _dirAC = 0;
-	int acS1, acS2, acS3, acS4, acS5 = 0;
+  int x, y, ang;
 
   int arm_speed, t;
 
@@ -181,9 +183,14 @@ task main()
     timer_protect_right_move=timer_protect_right_move+t;
     timer_o_c_hand=timer_o_c_hand+t;
     timer_flipping=timer_flipping+t;
-  	// process angle sensor
+    timer_JOY2_BUTTON_X=timer_JOY2_BUTTON_X+t;
+    timer_JOY2_BUTTON_B=timer_JOY2_BUTTON_B+t;
+
+
+    // process angle sensor
   	arm_left_pos=get_arm_left_pos();
   	arm_right_pos=get_arm_right_pos();
+
 		// process joystick control
 
     getJoystickSettings(joystick);
@@ -194,6 +201,8 @@ task main()
     if (timer_protect_right_move>2000) timer_protect_right_move=2000;
     if (timer_o_c_hand>2000) timer_o_c_hand=2000;
     if (timer_flipping>2000) timer_flipping=2000;
+    if (timer_JOY2_BUTTON_X>2000) timer_JOY2_BUTTON_X=2000;
+    if (timer_JOY2_BUTTON_B>2000) timer_JOY2_BUTTON_B=2000;
 
     if ((!joy1Btn(JOY_BUTTON_J1_CLICK)) & (!joy1Btn(JOY_BUTTON_J2_CLICK)))
     {
@@ -243,113 +252,63 @@ task main()
 		  RunAt(0, 0, 0);
 
 
-    // HAND MICRO MOVE back & forth
-    if (joy1Btn(JOY_BUTTON_J1_CLICK)) {y1=joystick.joy1_y1; timer_protect_left_move=0;} else y1=0;
-    if (joy1Btn(JOY_BUTTON_J2_CLICK))	{y2=joystick.joy1_y2; timer_protect_right_move=0;} else y2=0;
-
-		if (left_hand_pos == HAND_GUA)
-		  servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_GUA_ANG+round(y1*30/128), SERVO_SPEED_SLOW);
-		if (right_hand_pos == HAND_GUA)
-		  servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_GUA_ANG+round(y2*30/128), SERVO_SPEED_SLOW);
-
 
 		// open/close hand
-    if ((joy2Btn(JOY_BUTTON_Y)) & (timer_o_c_hand>300))
-    {
-      timer_o_c_hand=0;
-   		if (arm_left_pos>ARM_LEFT_SAFE_POS)
-   		{
-				if (left_hand_pos == HAND_JIE)
-					hand_left_gua();
-				else
-					hand_left_jie();
-	    };
-   		if (arm_right_pos>ARM_RIGHT_SAFE_POS)
-   		{
-				if (right_hand_pos == HAND_JIE)
-					hand_right_gua();
-				else
-					hand_right_jie();
-		  };
-	  };
+    if (joy2Btn(JOY_BUTTON_Y) & (arm_left_pos>ARM_LEFT_SAFE_POS))
+      hand_all_close();
 
-    if ((joy2Btn(JOY_BUTTON_X)) & (timer_o_c_hand>300))
+    if ((joy2Btn(JOY_BUTTON_X)) & (arm_left_pos>ARM_LEFT_SAFE_POS))
     {
-      timer_o_c_hand=0;
-   		if (arm_left_pos>ARM_LEFT_SAFE_POS)
-   		{
-				if (left_hand_pos == HAND_JIE)
-					hand_left_gua();
-				else
-					hand_left_jie();
-	    };
-	  };
-    if ((joy2Btn(JOY_BUTTON_B)) & (timer_o_c_hand>300))
+      if (timer_JOY2_BUTTON_X>300){
+        if (left_hand_bottom_pos==HAND_CLOSE)
+        {
+          servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_GUA_ANG, SERVO_SPEED_NORMAL);
+          left_hand_bottom_pos=HAND_OPEN;
+        }
+        else
+        {
+          servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_JIE_ANG, SERVO_SPEED_NORMAL);
+          servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_JIE_ANG, SERVO_SPEED_NORMAL);
+          left_hand_bottom_pos=HAND_CLOSE;
+        };
+        timer_JOY2_BUTTON_X=0;
+      };
+    };
+
+    if ((joy2Btn(JOY_BUTTON_B)) & (arm_right_pos>ARM_LEFT_SAFE_POS))
     {
-      timer_o_c_hand=0;
-   		if (arm_right_pos>ARM_RIGHT_SAFE_POS)
-   		{
-				if (right_hand_pos == HAND_JIE)
-					hand_right_gua();
-				else
-					hand_right_jie();
-		  };
-	  };
+      if (timer_JOY2_BUTTON_B>300){
+        if (right_hand_bottom_pos==HAND_CLOSE)
+        {
+          servo_right_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_GUA_ANG, SERVO_SPEED_NORMAL);
+          right_hand_bottom_pos=HAND_OPEN;
+        }
+        else
+        {
+          servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_JIE_ANG, SERVO_SPEED_NORMAL);
+          servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_JIE_ANG, SERVO_SPEED_NORMAL);
+          right_hand_bottom_pos=HAND_CLOSE;
+        };
+        timer_JOY2_BUTTON_B=0;
+      };
+    };
 
-	  // HAND  roll
-		if (arm_left_pos>ARM_LEFT_SAFE_POS)
-		{
-      if (joy1Btn(JOY_BUTTON_J1_CLICK)) x1=joystick.joy1_x1; else x1=0;
-			if (left_hand_pos == HAND_JIE)
-			  servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_JIE_ANG+round(-x1*90/128), SERVO_SPEED_SLOW);
-			else
-			  servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_GUA_ANG+round(-x1*90/128), SERVO_SPEED_SLOW);
-			if (x1!=0)
-			{
-				if ((x1>120) || (x1<-120))
-				{
-					if (time1[timer_left_hand_roll]>1000)
-					{
-						if (left_hand_pos == HAND_JIE)
-							hand_left_gua();
-						else
-							hand_left_jie();
-						ClearTimer(timer_left_hand_roll);
-					}
-				} else
-					ClearTimer(timer_left_hand_roll);
-			} else
-				ClearTimer(timer_left_hand_roll);
-	  };
+    if (joy2Btn(JOY_BUTTON_LB) & (arm_left_pos>ARM_LEFT_SAFE_POS))
+      servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_GUA_ANG, SERVO_SPEED_NORMAL);
 
-		if (arm_right_pos>ARM_LEFT_SAFE_POS)
-		{
-      if (joy1Btn(JOY_BUTTON_J2_CLICK))	x2=joystick.joy1_x2; else x2=0;
-			if (right_hand_pos == HAND_JIE)
-			  servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_JIE_ANG+round(x2*90/128), SERVO_SPEED_SLOW);
-			else
-			  servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_GUA_ANG+round(x2*90/128), SERVO_SPEED_SLOW);
-			if (x2!=0)
-			{
-				if ((x2>120) || (x2<-120))
-				{
-					if (time1[timer_right_hand_roll]>1000)
-					{
-						if (right_hand_pos == HAND_JIE)
-							hand_right_gua();
-						else
-							hand_right_jie();
-						ClearTimer(timer_right_hand_roll);
-					}
-				} else
-					ClearTimer(timer_right_hand_roll);
-			} else
-				ClearTimer(timer_right_hand_roll);
-	  };
+    if (joy2Btn(JOY_BUTTON_LT) & (arm_left_pos>ARM_LEFT_SAFE_POS))
+      servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_JIE_ANG, SERVO_SPEED_NORMAL);
+
+    if (joy2Btn(JOY_BUTTON_RB) & (arm_right_pos>ARM_RIGHT_SAFE_POS))
+      servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_GUA_ANG, SERVO_SPEED_NORMAL);
+
+    if (joy2Btn(JOY_BUTTON_RT) & (arm_left_pos>ARM_LEFT_SAFE_POS))
+      servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_JIE_ANG, SERVO_SPEED_NORMAL);
+
 
 
     // clip arm control
-    if ((arm_clip_pos==ARM_CLIP_HORIZON) & (time1[timer_clipping]>1000))  // weighting
+    if ((arm_clip_pos==ARM_CLIP_HORIZON) & (time1[timer_clipping]>300))  // weighting
     {
 		  servo_clip_left_MoveToDeg(ARM_CLIP_HORIZON_ANG-round(get_left_ring_weight()/400.0*60), SERVO_SPEED_NORMAL);
 		  servo_clip_right_MoveToDeg(ARM_CLIP_HORIZON_ANG-round(get_right_ring_weight()/400.0*60), SERVO_SPEED_NORMAL);
@@ -363,23 +322,28 @@ task main()
 
     if(joy1Btn(JOY_BUTTON_RT))
     {
-      arm_pickup_horizon ();
+      arm_pickup_horizon();
+    }
+
+    if(joy1Btn(JOY_BUTTON_RB))
+    {
+      arm_pickup_park();
     }
     else if(joy1Btn(JOY_BUTTON_A))
     {
-      if ((arm_clip_pos==ARM_CLIP_RELEASE) || (arm_clip_pos==ARM_CLIP_HORIZON)|| (arm_clip_pos==ARM_CLIP_PARK))
+      if ((arm_clip_pos==ARM_CLIP_CLIP) || (arm_clip_pos==ARM_CLIP_HORIZON)|| (arm_clip_pos==ARM_CLIP_PARK))
       {
-        if (time1[timer_clipping]>1000)
+        if (time1[timer_clipping]>300)
         {
-        	arm_pickup_clip ();
+        	arm_pickup_release();
           ClearTimer(timer_clipping);
         }
       }
       else
       {
-        if (time1[timer_clipping]>1000)
+        if (time1[timer_clipping]>300)
         {
-          arm_pickup_release();
+          arm_pickup_clip();
           ClearTimer(timer_clipping);
         };
       };
@@ -389,7 +353,7 @@ task main()
     {
       if ((flipper_pos==FLIPPER_DOWN))
       {
-        if (timer_flipping>500)
+        if (timer_flipping>300)
         {
         	flipper_up();
           timer_flipping=0;
@@ -397,7 +361,7 @@ task main()
       }
       else
       {
-        if (timer_flipping>500)
+        if (timer_flipping>300)
         {
           flipper_down();
           timer_flipping=0;
@@ -405,9 +369,10 @@ task main()
       };
     };
 
+    /*
     if (joy2btn(JOY_BUTTON_LB))
     {
-      // set move target of left arm
+      //  set move target of left arm
       if (!arm_left_moving_up_to_target)
         left_arm_move_up_one_level();
     };
@@ -418,6 +383,7 @@ task main()
       if (!arm_left_moving_down_to_target)
         left_arm_move_down_one_level();
     };
+    */
 
     // LEFT ARM UP
 	  if(joystick.joy2_y1>5  & (arm_left_pos<ARM_LEFT_MAX))
@@ -464,7 +430,7 @@ task main()
       };
     };
 
-
+    /*
     if (joy2Btn(JOY_BUTTON_RB))
     {
       // set move target of right arm
@@ -479,6 +445,7 @@ task main()
         right_arm_move_down_one_level();
     };
 
+    */
 
     if((joystick.joy2_y2>5) & (arm_right_pos<ARM_RIGHT_MAX))    // RIGHT ARM UP
     {
@@ -503,7 +470,8 @@ task main()
     else
 			arm_right_stop();
 
-    if (arm_right_moving_up_to_target)
+    /*
+		if (arm_right_moving_up_to_target)
     {
       if (arm_right_pos<arm_right_target)
 		  	arm_right_up(50);
@@ -524,5 +492,6 @@ task main()
         arm_right_moving_down_to_target=false;
       };
     };
+    */
 	}
 }

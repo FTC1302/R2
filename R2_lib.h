@@ -28,12 +28,6 @@ void arm_right_down(int speed);
 bool is_arm_right_touch_bottom();
 int get_arm_right_pos();
 
-void hand_left_jie();
-void hand_left_gua();
-
-void hand_right_gua();
-void hand_right_jie();
-
 void init_IR_sensor();
 int get_IR_direction();
 
@@ -218,7 +212,7 @@ void arm_pickup_horizon ()
 {
 	servo_clip_left_MoveToDeg(ARM_CLIP_HORIZON_ANG, SERVO_SPEED_VERY_FAST);
 	servo_clip_right_MoveToDeg(ARM_CLIP_HORIZON_ANG, SERVO_SPEED_VERY_FAST);
-	arm_clip_pos=ARM_CLIP_ARM_CLIP_HORIZON;
+	arm_clip_pos=ARM_CLIP_HORIZON;
 }
 void arm_pickup_clip ()
 {
@@ -262,19 +256,31 @@ void arm_left_down(int speed){
 		motor[arm_motor_left]=speed;
 };
 
+void  hand_all_close(){
+	servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_JIE_ANG, SERVO_SPEED_FAST);
+	servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_JIE_ANG, SERVO_SPEED_FAST);
+  servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_JIE_ANG, SERVO_SPEED_FAST);
+  servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_JIE_ANG, SERVO_SPEED_FAST);
+}
 
+/*
 void hand_left_jie (){
 	servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_JIE_ANG, SERVO_SPEED_SLOW);
 	servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_JIE_ANG, SERVO_SPEED_SLOW);
   left_hand_pos= HAND_JIE;
 }
 
-void hand_left_gua (){
+void hand_left_open (){
+  servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_GUA_ANG, SERVO_SPEED_SLOW);
+  left_hand_pos= HAND_GUA;
+}
+
+void hand_left_gua_down (){
   servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_GUA_ANG, SERVO_SPEED_SLOW);
   servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_GUA_ANG, SERVO_SPEED_SLOW);
   left_hand_pos= HAND_GUA;
 }
-
+*/
 bool is_arm_left_touch_bottom(){
 	int pb_io_stat;
 	pb_io_stat= HTSPBreadIO(HTSPB, 0xff);
@@ -326,6 +332,7 @@ void arm_right_down(int speed){
 	motor[arm_motor_right]=-speed;
 };
 
+/*
 void hand_right_gua (){
   servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_GUA_ANG, SERVO_SPEED_SLOW);
   servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_GUA_ANG, SERVO_SPEED_SLOW);
@@ -335,8 +342,10 @@ void hand_right_gua (){
 void hand_right_jie (){
   servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_JIE_ANG, SERVO_SPEED_SLOW);
   servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_JIE_ANG, SERVO_SPEED_SLOW);
-  right_hand_pos= HAND_JIE;
+  right_hand_upper_pos= HAND_UP;
+  right_hand_bottom_pos= HAND_CLOSE;
 }
+*/
 
 bool is_arm_right_touch_bottom(){
 	int pb_io_stat;
