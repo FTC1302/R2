@@ -292,6 +292,7 @@ int get_arm_left_pos(){
 	return HTANGreadAccumulatedAngle(sensor_arm_left_angle);
 }
 
+/*
 void left_arm_move_up_one_level(){
   arm_left_target=ARM_TARGET_LEVEL3;
   if (arm_left_pos<ARM_TARGET_LEVEL2) arm_left_target=ARM_TARGET_LEVEL2;
@@ -319,6 +320,7 @@ void right_arm_move_down_one_level(){
   if (arm_right_pos>ARM_TARGET_LEVEL3) arm_right_target=ARM_TARGET_LEVEL3;
   arm_right_moving_down_to_target=true;
 };
+*/
 
 void arm_right_stop(){
 	motor[arm_motor_right]=0;

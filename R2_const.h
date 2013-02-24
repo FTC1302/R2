@@ -45,9 +45,9 @@ const int ARM_CLIP_CLIP    = 4;
 const int FLIPPER_UP    = 1;
 const int FLIPPER_DOWN  = 2;
 
-const int ARM_CLIP_PARK_ANG     = 170;
-const int ARM_CLIP_HORIZON_ANG  = 90;
-const int ARM_CLIP_RELEASE_ANG  = 30;
+const int ARM_CLIP_PARK_ANG     = 180;
+const int ARM_CLIP_HORIZON_ANG  = 100;
+const int ARM_CLIP_RELEASE_ANG  = 40;
 const int ARM_CLIP_CLIP_ANG     = 0;
 
 const int FLAPPER_ANG = 90;
