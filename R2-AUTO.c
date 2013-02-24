@@ -193,6 +193,8 @@ task main()
 	RunAt(0,100,0);
 	wait1Msec(1700);
 	int hongwai;
+	int left_arm_pos;
+	left_arm_pos=get_arm_left_pos()
 	hongwai=get_IR_direction();
 	if(hongwai==5)
 	{
@@ -210,5 +212,10 @@ task main()
 				auto_right();
 			}
 		}
-
+		while(left_arm_pos<1000)
+	{
+		arm_left_up(100);
+		left_arm_pos=get_arm_left_pos()
 	}
+		arm_left_up(0);
+}
