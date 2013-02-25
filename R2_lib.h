@@ -263,6 +263,11 @@ void  hand_all_close(){
   servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_JIE_ANG, SERVO_SPEED_FAST);
 }
 
+void  hand_all_open(){
+	servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_GUA_ANG, SERVO_SPEED_FAST);
+  servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_GUA_ANG, SERVO_SPEED_FAST);
+}
+
 /*
 void hand_left_jie (){
 	servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_JIE_ANG, SERVO_SPEED_SLOW);

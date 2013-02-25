@@ -17,25 +17,29 @@ const int JOY_BUTTON_TOPHAT_DOWN_LEFT= 5;
 const int JOY_BUTTON_TOPHAT_LEFT= 6;
 const int JOY_BUTTON_TOPHAT_UP_LEFT= 7;
 
-const int JOYSTICK_ERROR=5;
+const int JOYSTICK_ERROR=7;
 
 
 const int BUTTON_CLICK_DELAY=300;
 
-const int HAND_LEFT_TOP_JIE_ANG=115;
+const int HAND_LEFT_TOP_JIE_ANG=50;
 const int HAND_LEFT_BOTTOM_JIE_ANG=5;
-const int HAND_LEFT_TOP_GUA_ANG=170;
+const int HAND_LEFT_TOP_GUA_ANG=92;
 const int HAND_LEFT_BOTTOM_GUA_ANG=176;
+const int HAND_LEFT_TOP_YUN_ANG=25;
 
-const int HAND_RIGHT_TOP_JIE_ANG=70;
+const int HAND_RIGHT_TOP_JIE_ANG=50;
 const int HAND_RIGHT_BOTTOM_JIE_ANG=0;
-const int HAND_RIGHT_TOP_GUA_ANG=130;
+const int HAND_RIGHT_TOP_GUA_ANG=92;
 const int HAND_RIGHT_BOTTOM_GUA_ANG=178;
+const int HAND_RIGHT_TOP_YUN_ANG=35;
 
 const int HAND_OPEN   = 1;
 const int HAND_CLOSE  = 2;
 const int HAND_UP     = 3;
 const int HAND_DOWN   = 4;
+
+
 
 const int ARM_CLIP_PARK    = 1;
 const int ARM_CLIP_HORIZON = 2;

@@ -4,6 +4,7 @@
 #pragma config(Sensor, S4,     HTSPB,          sensorI2CCustom9V)
 #pragma config(Motor,  motorA,          nxtmotor_flapper_left,     tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorB,          nxtmotor_flapper_right,    tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  motorC,          nxtmotor_JSG,    tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  mtr_S1_C3_1,     drive_motor_1, tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_2,     drive_motor_2, tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C1_1,     arm_motor_left, tmotorTetrix, openLoop)
@@ -30,6 +31,7 @@ int arm_right_pos = 0;
 
 int arm_clip_pos = ARM_CLIP_PARK;
 int flipper_pos = FLIPPER_DOWN;
+int JSG_target = 0;
 
 int sensor_IR=sensor_arm_left_angle;
 
@@ -70,10 +72,13 @@ void init()
 	RunAt(0, 0, 0);
 
   motor[nxtmotor_flapper_left] = 0;                // reset the Motor Encoder of Motor B
-  motor[nxtmotor_flapper_right] = 0;                // reset the Motor Encoder of Motor C
-
 	nMotorEncoder[nxtmotor_flapper_left] = 0;                // reset the Motor Encoder of Motor B
+
+	motor[nxtmotor_flapper_right] = 0;                // reset the Motor Encoder of Motor C
   nMotorEncoder[nxtmotor_flapper_right] = 0;                // reset the Motor Encoder of Motor C
+
+	motor[nxtmotor_JSG] = 0;                // reset the Motor Encoder of Motor C
+  nMotorEncoder[nxtmotor_JSG] = 0;                // reset the Motor Encoder of Motor C
 
 
 	arm_pickup_park();
@@ -195,16 +200,13 @@ task main()
     if ((x==0) & (y==0) & (ang==0))
     {
       int speed=40;
-      if (joystick.joy1_y2>100) speed=80;
-      if (joystick.joy1_y2<-100) speed=20;
-
 	    switch(joystick.joy1_TopHat)
 	    {
 	      case JOY_BUTTON_TOPHAT_UP:        x=0;        y=speed;    break;
 	      case JOY_BUTTON_TOPHAT_UP_RIGHT:  x=speed;    y=speed;    break;
 	      case JOY_BUTTON_TOPHAT_RIGHT:     x=speed;    y= 0;       break;
 	      case JOY_BUTTON_TOPHAT_DOWN_RIGHT:x=speed;    y=-speed;   break;
-	      case JOY_BUTTON_TOPHAT_DOWN:      x=0;        y=-speed;   break;
+	      case JOY_BUTTON_TOPHAT_DOWN:      x=0;        y=-80;     break;
 	      case JOY_BUTTON_TOPHAT_DOWN_LEFT: x=-speed;   y=-speed;   break;
 	      case JOY_BUTTON_TOPHAT_LEFT:      x=-speed;   y=0;        break;
 	      case JOY_BUTTON_TOPHAT_UP_LEFT:   x=-speed;   y=speed;    break;
@@ -215,11 +217,19 @@ task main()
 
 
 		//  hand operation
-    if (joy2Btn(JOY_BUTTON_Y) & (arm_left_pos>ARM_LEFT_SAFE_POS))
+    if (joy2Btn(JOY_BUTTON_Y) & (arm_left_pos>ARM_LEFT_SAFE_POS) & (arm_right_pos>ARM_LEFT_SAFE_POS))
     {
       hand_all_close();
       left_hand_bottom_pos=HAND_CLOSE;
       right_hand_bottom_pos=HAND_CLOSE;
+
+    };
+
+    if (joy2Btn(JOY_BUTTON_A) & (arm_left_pos>ARM_LEFT_SAFE_POS)&  (arm_right_pos>ARM_LEFT_SAFE_POS))
+    {
+      hand_all_open();
+      left_hand_bottom_pos=HAND_OPEN;
+      right_hand_bottom_pos=HAND_OPEN;
 
     };
 
@@ -263,13 +273,13 @@ task main()
       servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_GUA_ANG, SERVO_SPEED_NORMAL);
 
     if (joy2Btn(JOY_BUTTON_LT) & (arm_left_pos>ARM_LEFT_SAFE_POS))
-      servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_JIE_ANG, SERVO_SPEED_NORMAL);
+      servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_YUN_ANG, SERVO_SPEED_NORMAL);
 
     if (joy2Btn(JOY_BUTTON_RB) & (arm_right_pos>ARM_RIGHT_SAFE_POS))
       servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_GUA_ANG, SERVO_SPEED_NORMAL);
 
     if (joy2Btn(JOY_BUTTON_RT) & (arm_left_pos>ARM_LEFT_SAFE_POS))
-      servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_JIE_ANG, SERVO_SPEED_NORMAL);
+      servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_YUN_ANG, SERVO_SPEED_NORMAL);
 
 
 
@@ -335,15 +345,61 @@ task main()
       };
     };
 
+    //JSG control
+    switch(joystick.joy2_TopHat)
+    {
+      case JOY_BUTTON_TOPHAT_RIGHT:
+        motor[nxtmotor_JSG]=30;
+      break;
+      case JOY_BUTTON_TOPHAT_LEFT:
+        motor[nxtmotor_JSG]=-30;
+      break;
+		  default:
+        motor[nxtmotor_JSG]=0;
+		  break;
+    };
+
+/*
+int JSG_POWER=30;
+    if (JSG_target>0)
+    {
+      if (nMotorEncoder[nxtmotor_JSG]<JSG_target)
+        motor[nxtmotor_JSG]=JSG_POWER
+      else
+        motor[nxtmotor_JSG]=0;
+    }
+    else if (JSG_target<0)
+    {
+      if (nMotorEncoder[nxtmotor_JSG]>JSG_target)
+        motor[nxtmotor_JSG]=-JSG_POWER
+      else
+        motor[nxtmotor_JSG]=0;
+    }
+    else {
+      if (motor[nxtmotor_JSG]<-15)
+        motor[nxtmotor_JSG]=JSG_POWER
+      else if ((motor[nxtmotor_JSG]>8)
+        motor[nxtmotor_JSG]=-JSG_POWER
+      else
+        motor[nxtmotor_JSG]=0
+    }
+*/
+
     // LEFT ARM UP
 	  if(joystick.joy2_y1>5  & (arm_left_pos<ARM_LEFT_MAX))
 	  {
+	    if ((arm_left_pos>100) & (left_hand_bottom_pos  == HAND_CLOSE))
+	      servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_YUN_ANG, SERVO_SPEED_NORMAL);
+
 	  	arm_speed=round(joystick.joy2_y1/128*100);
 			arm_left_up(arm_speed);
 	  }
 	  else if(joystick.joy2_y1<-5 & (arm_left_pos>ARM_LEFT_MIN))  // LEFT ARM DOWN
 	  {
-	  	arm_speed=abs(round(joystick.joy2_y1/128.0*100));
+	    if ((arm_left_pos<300) & (left_hand_bottom_pos  == HAND_CLOSE))
+	      servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_JIE_ANG, SERVO_SPEED_NORMAL);
+
+	    arm_speed=abs(round(joystick.joy2_y1/128.0*100));
 	  	if (!is_arm_left_touch_bottom())
 				arm_left_down(arm_speed);
 			else
@@ -355,12 +411,18 @@ task main()
 
     if((joystick.joy2_y2>5) & (arm_right_pos<ARM_RIGHT_MAX))    // RIGHT ARM UP
     {
+	    if  ((arm_right_pos>100) & (right_hand_bottom_pos  == HAND_CLOSE))
+	      servo_right_hand_top_MoveToDeg(HAND_right_TOP_YUN_ANG, SERVO_SPEED_NORMAL);
+
 	  	arm_speed=round(joystick.joy2_y2/128.0*100);
 	  	arm_right_up(arm_speed);
 	  }
 	  else if((joystick.joy2_y2<-5) & (arm_right_pos>ARM_RIGHT_MIN))   // RIGHT ARM DOWN
 	  {
-	  	arm_speed=-round(joystick.joy2_y2/128.0*100);
+	    if ((arm_right_pos<300)  & (right_hand_bottom_pos  == HAND_CLOSE))
+	      servo_right_hand_top_MoveToDeg(HAND_right_TOP_JIE_ANG, SERVO_SPEED_NORMAL);
+
+	    arm_speed=-round(joystick.joy2_y2/128.0*100);
 	  	if (!is_arm_right_touch_bottom())
 				arm_right_down(arm_speed);
 			else
