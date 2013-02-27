@@ -1,4 +1,4 @@
-const int JOY_BUTTON_X=01;
+ const int JOY_BUTTON_X=01;
 const int JOY_BUTTON_A=02;
 const int JOY_BUTTON_B=03;
 const int JOY_BUTTON_Y=04;
@@ -24,13 +24,13 @@ const int BUTTON_CLICK_DELAY=300;
 
 const int HAND_LEFT_TOP_JIE_ANG=50;
 const int HAND_LEFT_BOTTOM_JIE_ANG=5;
-const int HAND_LEFT_TOP_GUA_ANG=92;
+const int HAND_LEFT_TOP_GUA_ANG=102;
 const int HAND_LEFT_BOTTOM_GUA_ANG=176;
 const int HAND_LEFT_TOP_YUN_ANG=25;
 
 const int HAND_RIGHT_TOP_JIE_ANG=50;
 const int HAND_RIGHT_BOTTOM_JIE_ANG=0;
-const int HAND_RIGHT_TOP_GUA_ANG=92;
+const int HAND_RIGHT_TOP_GUA_ANG=102;
 const int HAND_RIGHT_BOTTOM_GUA_ANG=178;
 const int HAND_RIGHT_TOP_YUN_ANG=35;
 
@@ -79,5 +79,3 @@ const int SERVO_SPEED_SLOW	=	3;
 const int SERVO_SPEED_NORMAL	=	5;
 const int SERVO_SPEED_FAST	=	7;
 const int SERVO_SPEED_VERY_FAST	=	9;
-
-

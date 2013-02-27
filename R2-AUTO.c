@@ -1,10 +1,10 @@
-
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
 #pragma config(Sensor, S2,     sensor_arm_left_angle, sensorI2CCustom)
 #pragma config(Sensor, S3,     sensor_arm_right_angle, sensorI2CCustom)
 #pragma config(Sensor, S4,     HTSPB,          sensorI2CCustom9V)
 #pragma config(Motor,  motorA,          nxtmotor_flapper_left,     tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorB,          nxtmotor_flapper_right,    tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  motorC, nxtmotor_JSG, tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  mtr_S1_C3_1,     drive_motor_1, tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_2,     drive_motor_2, tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C1_1,     arm_motor_left, tmotorTetrix, openLoop)
@@ -38,8 +38,9 @@ bool arm_right_down_pressed = false;
 
 int arm_clip_pos = ARM_CLIP_PARK;
 int flipper_pos = FLIPPER_DOWN;
-
+int JSG_target = 0;
 int sensor_IR=sensor_arm_left_angle;
+
 
 
 int left_hand_bottom_pos  = HAND_CLOSE;
@@ -145,93 +146,225 @@ void init_arm_pos()
 	arm_left_target = ARM_TARGET_NONE;
   arm_right_target = ARM_TARGET_NONE;
   }
-void auto_left()
+void auto_right()
 	{
-		RunAt(0,0,30);
-		wait1Msec(560);
-		RunAt(0,100,0);
-		wait1Msec(1800);
-		RunAt(100,0,0);
-		wait1Msec(1600);
-		RunAt(0,0,-30);
-		wait1Msec(430);
+		motor[nxtmotor_JSG] = 0;
+  	nMotorEncoder[nxtmotor_JSG] = 0;
+		motor[nxtmotor_JSG] = 30;
+		wait1Msec(300);
+		motor[nxtmotor_JSG] = 0;
+		wait1Msec(10);
+		motor[nxtmotor_flapper_left]=30;
+		motor[nxtmotor_flapper_right]=30;
+		wait1Msec(500);
+		motor[nxtmotor_flapper_left]=-30;
+		motor[nxtmotor_flapper_right]=-30;
+		wait1Msec(500);
+		motor[nxtmotor_flapper_left]=0;
+		motor[nxtmotor_flapper_right]=0;
+		wait1Msec(100);
+		RunAt(40,0,0);
+		wait1Msec(1000);
+	  RunAt(0,0,-30);
+	  wait1Msec(300);
+	  RunAt(0,50,0);
+	  wait1Msec(2000);
+		RunAt(-30,0,0);
+	  wait1Msec(500);
 		RunAt(0,50,0);
 		wait1Msec(1000);
-		RunAt(-30,0,0);
-		wait1Msec(1100);
+		RunAt(30,0,0);
+		wait1Msec(420);
 		RunAt(0,50,0);
-		wait1Msec(900);
+		wait1Msec(1000);
+		RunAt(0,0,30);
+		wait1Msec(290);
+		RunAt(0,0,0);
+		wait1Msec(10);
 	}
 	void auto_middle()
 	{
-		RunAt(0,0,-30);
-		wait1Msec(430);
-		RunAt(0,100,0);
-		wait1Msec(1500);
-		RunAt(-100,0,0);
-		wait1Msec(2000);
-		RunAt(0,0,30);
-		wait1Msec(430);
-		RunAt(0,50,0);
-		wait1Msec(1000);
-		RunAt(30,0,0);
-		wait1Msec(950);
-		RunAt(0,50,0);
-		wait1Msec(900);
-
-	}
-	void auto_right()
-	{
-	  RunAt(0,-50,0);
+		motor[nxtmotor_JSG] = 0;
+  	nMotorEncoder[nxtmotor_JSG] = 0;
+		motor[nxtmotor_JSG] = 30;
+		wait1Msec(300);
+		motor[nxtmotor_JSG] = 0;
+		wait1Msec(10);
+		motor[nxtmotor_flapper_left]=30;
+		motor[nxtmotor_flapper_right]=30;
+		wait1Msec(500);
+		motor[nxtmotor_flapper_left]=-30;
+		motor[nxtmotor_flapper_right]=-30;
+		wait1Msec(500);
+		motor[nxtmotor_flapper_left]=0;
+		motor[nxtmotor_flapper_right]=0;
+		wait1Msec(100);
+		RunAt(-30,0,0);
+		wait1Msec(400);
+	  RunAt(0,50,0);
 	  wait1Msec(800);
-	  RunAt(0,0,0);
-	  wait1Msec(500);
-		RunAt(0,100,0);
-	  wait1Msec(4000);
-	  RunAt(0,0,0);
+	  RunAt(0,0,-30);
+	  wait1Msec(400);
+		RunAt(0,50,0);
 	  wait1Msec(1000);
 		RunAt(30,0,0);
-		wait1Msec(650);
+		wait1Msec(1000);
 		RunAt(0,50,0);
-		wait1Msec(900);
+		wait1Msec(500);
+		RunAt(-30,0,0);
+		wait1Msec(500);
+		RunAt(0,30,0);
+		wait1Msec(1000);
+		RunAt(0,0,30);
+		wait1Msec(150);
 		RunAt(0,0,0);
-		wait1Msec(0);
+		wait1Msec(10);
+
+	}
+	void auto_left()
+	{
+		motor[nxtmotor_JSG] = 0;
+  	nMotorEncoder[nxtmotor_JSG] = 0;
+		motor[nxtmotor_JSG] = -30;
+		wait1Msec(300);
+		motor[nxtmotor_JSG] = 0;
+		wait1Msec(10);
+		motor[nxtmotor_flapper_left]=30;
+		motor[nxtmotor_flapper_right]=30;
+		wait1Msec(500);
+		motor[nxtmotor_flapper_left]=-30;
+		motor[nxtmotor_flapper_right]=-30;
+		wait1Msec(500);
+		motor[nxtmotor_flapper_left]=0;
+		motor[nxtmotor_flapper_right]=0;
+		wait1Msec(100);
+		RunAt(-30,0,0);
+		wait1Msec(320);
+	  RunAt(0,50,0);
+	  wait1Msec(800);
+	  RunAt(0,0,-30);
+	  wait1Msec(550);
+		RunAt(0,50,0);
+	  wait1Msec(1000);
+		RunAt(30,0,0);
+		wait1Msec(1360);
+		RunAt(0,50,0);
+		wait1Msec(500);
+		RunAt(-30,0,0);
+		wait1Msec(500);
+		RunAt(0,30,0);
+		wait1Msec(1000);
+		RunAt(0,0,-30);
+		wait1Msec(200);
+		RunAt(0,0,0);
+		wait1Msec(10);
 
 	}
 task main()
-	{
+{
 
 
 	int hongwai;
 	int left_arm_pos;
 	int right_arm_pos;
+	init();
+	init_arm_pos();
 	left_arm_pos=get_arm_left_pos();
 	right_arm_pos=get_arm_right_pos();
 	hongwai=get_IR_direction();
 	RunAt(0,100,0);
-	wait1Msec(3000);
-	RunAt(0,50,0);
-	wait1Msec(1000);
-	if(hongwai==5)
+	wait1Msec(1500);
+	RunAt(50,50,0);
+	wait1Msec(200);
+	RunAt(0,100,0);
+	wait1Msec(1400);
+	RunAt(0,0,0);
+	wait1Msec(10);
+	hongwai=get_IR_direction();
+	if((hongwai==3) || (hongwai==4))
+	{
+		auto_middle();
+		while(right_arm_pos<2000)
+		{
+			arm_right_up(100);
+			right_arm_pos=get_arm_right_pos();
+		}
+		arm_right_stop();
+		servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_GUA_ANG,SERVO_SPEED_NORMAL);
+		servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_GUA_ANG,SERVO_SPEED_NORMAL);
+		wait1Msec(2000);
+		while(right_arm_pos>1600)
+		{
+			arm_right_down(100);
+			right_arm_pos=get_arm_right_pos();
+		}
+		arm_right_stop();
+		servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_JIE_ANG,SERVO_SPEED_NORMAL);
+		servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_JIE_ANG,SERVO_SPEED_NORMAL);
+		wait1Msec(1000);
+		while(right_arm_pos>50)
+		{
+			arm_right_down(100);
+			right_arm_pos=get_arm_right_pos();
+		}
+		arm_right_stop();
+	}
+	else if((hongwai<8) && (hongwai>4))
 	{
 		auto_left();
+		while(left_arm_pos<2000)
+		{
+			arm_left_up(100);
+			left_arm_pos=get_arm_left_pos();
+		}
+		arm_left_stop();
+		servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_GUA_ANG,SERVO_SPEED_NORMAL);
+		servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_GUA_ANG,SERVO_SPEED_NORMAL);
+		wait1Msec(2000);
+		while(left_arm_pos>1600)
+		{
+			arm_left_down(100);
+			left_arm_pos=get_arm_left_pos();
+		}
+		arm_left_stop();
+		servo_left_hand_top_MoveToDeg(HAND_LEFT_TOP_JIE_ANG,SERVO_SPEED_NORMAL);
+		servo_left_hand_bottom_MoveToDeg(HAND_LEFT_BOTTOM_JIE_ANG,SERVO_SPEED_NORMAL);
+		wait1Msec(1000);
+		while(left_arm_pos>50)
+		{
+			arm_left_down(100);
+			left_arm_pos=get_arm_left_pos();
+		}
+		arm_left_stop();
+	}
+	else if((hongwai==1) || (hongwai==2))
+	{
+		auto_right();
+		while(right_arm_pos<2000)
+		{
+			arm_right_up(100);
+			right_arm_pos=get_arm_right_pos();
+		}
+		arm_right_stop();
+		servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_GUA_ANG,SERVO_SPEED_NORMAL);
+		servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_GUA_ANG,SERVO_SPEED_NORMAL);
+		wait1Msec(2000);
+		while(right_arm_pos>1600)
+		{
+			arm_right_down(100);
+			right_arm_pos=get_arm_right_pos();
+		}
+		arm_right_stop();
+		servo_right_hand_top_MoveToDeg(HAND_RIGHT_TOP_JIE_ANG,SERVO_SPEED_NORMAL);
+		servo_right_hand_bottom_MoveToDeg(HAND_RIGHT_BOTTOM_JIE_ANG,SERVO_SPEED_NORMAL);
+		wait1Msec(1000);
+		while(right_arm_pos>50)
+		{
+			arm_right_down(100);
+			right_arm_pos=get_arm_right_pos();
+		}
+		arm_right_stop();
 
 	}
-		else
-		{
-			if(hongwai<5)
-			{
-				auto_middle();
-			}
-			else;
-			{
-				auto_right();
-			}
-		}
-		while(right_arm_pos<1500)
-	{
-		arm_right_up(100);
-		right_arm_pos=get_arm_right_pos()
-	}
-		arm_right_up(0);
 }
+
