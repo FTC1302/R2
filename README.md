@@ -29,15 +29,71 @@ R2_TEST_PB.C
 机器人的方向为【取圈臂在后，机械臂马达在前，所有的左右、前后均以此方向为基准】。
 
 
+修改记录：
+=========
+2012-13-25
+----------
+1. *TOPHAT运动控制后退速度加快
+2. *摇杆误差控从5改为7.
+3. JSG由游戏手柄2TOPHAT左右控制。
+4. *机械手增加夹紧圈的状态。
 
-<<<<<<< HEAD
+
 R2操作方法：
 ===========
 
 开机
 ----
+0. 如果是第一次使用，请将机械臂升高至机械臂手超过挡板的位置。
+1. 打开NXT电源。
+2. ROBOTC建立与NXT的蓝牙连接。
+3. ROBOTC调出FTC控制台界面。
+4. 点选“ALL STOP"
+5. 选择TELEOP.REX程序
+6. 点选”READY“， 此时NXT应发出咔。咔。咔。。。的声音
+7. 打开TETRIX电源
+8  点选”RUNNING..."NXT发出由低到高的音调。
+9. 手动将机械臂降到最低位置，确保机械手的底部压住触碰传感器，每个机械手压到触碰传感器时，NXT会发出“滴滴”的声音。
+10. JSG调整到水平位置。
+11. 翻板放到到最低位置。
+12. 只要任何一个机械手没有到位，NXT会每隔1秒钟发出“咔”的声音，当两个机械手都压住触碰开关，NXT会发出有高到低的声调，表示初始化程序结束。
+13. 开始操作机器人。
 
-R2开机会先播放音乐声，然后将左右机械手置于接圈位置，取圈臂置于停机位置，然后等待两秒钟，等待伺服电机就位后，左右机械臂向下运动，直到左右触碰开关都被压住。这时的位置作为机械臂的起始位置，到位后发出“嘟嘟”声。
+操作
+----
+手柄1//驾驶及取圈
+
+	X	逆时针旋转
+	B	顺时针旋转
+	A	取圈臂夹/放
+	Y	翻板反转
+	LB
+	LT
+	RB
+	RT	取圈臂转到水平方向
+	J1(左)	全向运动控制
+	J1_CLICK
+	J2(右)	X方向控制旋转,Y方向推到头/底是加速/减速TOPHAT运动控制。
+	J2_CLICK
+	TOPHAT	全向运动，八方向精确控制，默认速度为60，经过J2加速到80或减速到20
+
+
+
+手柄2//挂圈
+
+	X	左机械手切换状态(从张开到收起时，放圈夹会自动立起来，反过来则不会）
+	B	右机械手切换状态(从张开到收起时，放圈夹会自动立起来，反过来则不会）
+	A	
+	Y	左右机械手全部收起
+	LB	左机械手放圈夹放下
+	LT	左机械手放圈夹抬起
+	RB	右机械手放圈夹放下
+	RT	右机械手放圈夹抬起
+	J1(左)	Y方向控制左机械臂上下
+	J1_CLICK
+	J2(右)	Y方向控制右机械臂上下
+	J2_CLICK
+	TOPHAT	左/右控制JSG动作
 
 
 
@@ -48,12 +104,14 @@ R2开机会先播放音乐声，然后将左右机械手置于接圈位置，取
 #pragma config(Sensor, 	S2,     	sensor_arm_left_angle, 	sensorI2CCustom)  	// 左机械臂的角度传感器
 #pragma config(Sensor, 	S3,     	sensor_arm_right_angle, sensorI2CCustom)	// 右机械臂角度传感器
 #pragma config(Sensor, 	S4,     	HTSPB,          	sensorI2CCustom9V)	// 原型板，扩充了两个触碰传感器和左右两个用于称重的压力传感器
-#pragma config(Motor,  	mtr_S1_C1_1,    drive_motor_1, 		tmotorTetrix, openLoop)	// 运动马达1 【注意】运动马达顺序不能接错，否则全向轮算法会混乱。
-#pragma config(Motor,  	mtr_S1_C1_2,    drive_motor_2, 		tmotorTetrix, openLoop)	// 运动马达2
-#pragma config(Motor,  	mtr_S1_C2_1,    arm_motor_left, 	tmotorTetrix, openLoop)	// 左机械臂驱动马达
-#pragma config(Motor,  	mtr_S1_C2_2,    arm_motor_right, 	tmotorTetrix, openLoop)	// 右机械臂马达
-#pragma config(Motor,  	mtr_S1_C3_1,    drive_motor_3, 		tmotorTetrix, openLoop)	// 运动马达3
-#pragma config(Motor,  	mtr_S1_C3_2,    drive_motor_4, 		tmotorTetrix, openLoop)	// 运动马达4
+#pragma config(Motor,  motorA,          nxtmotor_flapper_left,     tmotorNXT, PIDControl, encoder) //翻板左侧马达
+#pragma config(Motor,  motorB,          nxtmotor_flapper_right,    tmotorNXT, PIDControl, encoder) //翻板右侧马达
+#pragma config(Motor,  	mtr_S1_C3_1,    drive_motor_1, 		tmotorTetrix, openLoop)	// 运动马达1 【注意】运动马达顺序不能接错，否则全向轮算法会混乱。
+#pragma config(Motor,  	mtr_S1_C3_2,    drive_motor_2, 		tmotorTetrix, openLoop)	// 运动马达2
+#pragma config(Motor,  	mtr_S1_C1_1,    arm_motor_left, 	tmotorTetrix, openLoop)	// 左机械臂驱动马达
+#pragma config(Motor,  	mtr_S1_C1_2,    arm_motor_right, 	tmotorTetrix, openLoop)	// 右机械臂马达
+#pragma config(Motor,  	mtr_S1_C2_1,    drive_motor_3, 		tmotorTetrix, openLoop)	// 运动马达3
+#pragma config(Motor,  	mtr_S1_C2_2,    drive_motor_4, 		tmotorTetrix, openLoop)	// 运动马达4
 #pragma config(Servo,  	srvo_S1_C4_1,   servo_clip_left,      	tServoStandard)		// 取圈臂左侧伺服电机
 #pragma config(Servo,  	srvo_S1_C4_2,   servo_clip_right,     	tServoStandard)		// 取圈臂右侧伺服电机
 #pragma config(Servo,  	srvo_S1_C4_3,   servo_left_hand_bottom, tServoStandard)		// 左机械手底部伺服电机
@@ -63,30 +121,28 @@ R2开机会先播放音乐声，然后将左右机械手置于接圈位置，取
 ```
 
 
-=======
->>>>>>> 8108231c5a90082861072caba072aee5ae8a9bef
 常数说明(R2-const.h)：
 ==================
 ```C
 //游戏手柄常数，感谢罗罗的耐心和细心，把混乱的手柄代码搞清楚了。
-const int JOY_BUTTON_X=01;
-const int JOY_BUTTON_A=02;
-const int JOY_BUTTON_B=03;
-const int JOY_BUTTON_Y=04;
-const int JOY_BUTTON_LB=05;
-const int JOY_BUTTON_RB=06;
-const int JOY_BUTTON_LT=07;
-const int JOY_BUTTON_RT=08;
-const int JOY_BUTTON_J1_CLICK=11;
-const int JOY_BUTTON_J2_CLICK=12;
-const int JOY_BUTTON_TOPHAT_UP= 0;
-const int JOY_BUTTON_TOPHAT_UP_RIGHT= 1;
-const int JOY_BUTTON_TOPHAT_RIGHT= 2;
-const int JOY_BUTTON_TOPHAT_DOWN_RIGHT= 3;
-const int JOY_BUTTON_TOPHAT_DOWN= 4;
-const int JOY_BUTTON_TOPHAT_DOWN_LEFT= 5;
-const int JOY_BUTTON_TOPHAT_LEFT= 6;
-const int JOY_BUTTON_TOPHAT_UP_LEFT= 7;
+X=01;
+A=02;
+B=03;
+Y=04;
+LB=05;
+RB=06;
+LT=07;
+RT=08;
+J1_CLICK=11;
+J2_CLICK=12;
+TOPHAT_UP= 0;
+TOPHAT_UP_RIGHT= 1;
+TOPHAT_RIGHT= 2;
+TOPHAT_DOWN_RIGHT= 3;
+TOPHAT_DOWN= 4;
+TOPHAT_DOWN_LEFT= 5;
+TOPHAT_LEFT= 6;
+TOPHAT_UP_LEFT= 7;
 
 //检测按钮“点击”（注意不是“按住”）的时间定义，这里定义的是300毫秒以内的算“点击”
 const int BUTTON_CLICK_DELAY=300;
@@ -96,17 +152,10 @@ const int BUTTON_CLICK_DELAY=300;
 // 所有的伺服电机都调整为0-180度运动，方向根据需要按下面的定义设定：（顺时针/逆时针均为伺服电机轴面向自己时看到的方向）
 // 1. 取圈臂左：顺时针/逆时针
 // 2. 取圈臂右：顺时针/逆时针
-<<<<<<< HEAD
 // 3. 左机械手底部：顺时针
 // 4. 左机械手顶部：逆时针
 // 5. 右机械手底部：逆时针
 // 6. 右机械手顶部：顺时针
-=======
-// 3. 左机械手底部：顺时针/逆时针
-// 4. 左机械手顶部：顺时针/逆时针
-// 5. 右机械手底部：顺时针/逆时针
-// 6. 右机械手顶部：顺时针/逆时针
->>>>>>> 8108231c5a90082861072caba072aee5ae8a9bef
 
 //伺服电机移动速度常数,从非常快到非常慢，使用什么速度的主要考虑的因素是在不会把圈圈掉下来的情况下尽可能的快，有时候还要考虑不要让伺服电机之间打架。
 const int SERVO_SPEED_VERY_SLOW	=	1;
@@ -218,7 +267,6 @@ bool is_arm_right_touch_bottom();
 int get_arm_right_pos();
 //以上右机械臂函数参考左机械臂说明。
 
-<<<<<<< HEAD
 
 void init_IR_sensor();
 //初始化红外传感器
@@ -237,7 +285,5 @@ int get_left_ring_weight();
 int get_right_ring_weight();
 //读取左右称重传感器的重量值，0-1023，数字越大代表越重。
 
-=======
->>>>>>> 8108231c5a90082861072caba072aee5ae8a9bef
 ///////////////////////////////////////////////////////////////////////////////////
 ```
