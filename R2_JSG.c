@@ -7,7 +7,7 @@ int JSG_target = 0;
 task main()
 {
 /*
-	motor[nxtmotor_JSG] = 0;                // reset the Motor Encoder of Motor C
+	motor[nxtmotor_JSG] = 0;
   nMotorEncoder[nxtmotor_JSG] = 0;                // reset the Motor Encoder of Motor C
   while(true)
   {

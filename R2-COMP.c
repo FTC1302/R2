@@ -35,6 +35,11 @@ int JSG_target = 0;
 
 int sensor_IR=sensor_arm_left_angle;
 
+bool btn_start_pressed=false;
+bool btn_pause_pressed=false;
+
+bool last_btn_start_pressed=false;
+bool last_btn_pause_pressed=false;
 
 int left_hand_bottom_pos = HAND_CLOSE;
 int left_hand_upper_pos = HAND_UP;
@@ -99,6 +104,7 @@ void init()
 
 void init_arm_pos()
 {
+	/*
 	bool arm_left_touch_bottom, arm_right_touch_bottom;
 	ClearTimer(T1);
 	arm_left_touch_bottom=is_arm_left_touch_bottom();
@@ -127,6 +133,7 @@ void init_arm_pos()
       ClearTimer(T1);
     };
   };
+  */
   reset_angle_sensor();
 }
 
