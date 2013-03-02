@@ -35,6 +35,11 @@ int JSG_target = 0;
 
 int sensor_IR=sensor_arm_left_angle;
 
+bool btn_start_pressed=false;
+bool btn_pause_pressed=false;
+
+bool last_btn_start_pressed=false;
+bool last_btn_pause_pressed=false;
 
 int left_hand_bottom_pos = HAND_CLOSE;
 int left_hand_upper_pos = HAND_UP;
@@ -99,6 +104,7 @@ void init()
 
 void init_arm_pos()
 {
+	/*
 	bool arm_left_touch_bottom, arm_right_touch_bottom;
 	ClearTimer(T1);
 	arm_left_touch_bottom=is_arm_left_touch_bottom();
@@ -127,34 +133,52 @@ void init_arm_pos()
       ClearTimer(T1);
     };
   };
+  */
   reset_angle_sensor();
 }
 
+#include "R2-TELEOP.c"
+#include "R2-AUTO.c"
+
 task main()
 {
-	eraseDisplay();
-  while(true)
+
+  // all code will be ignored when joystick in stop mode
+  PlaySound(soundUpwardTones);
+  init();
+  checkExternalBatt();
+	PlaySound(soundDownwardTones);
+
+  while (joystick.StopPgm)
   {
-	  bool left_arm_touch_bottom, right_arm_touch_bottom;
-	  left_arm_touch_bottom = is_arm_left_touch_bottom();
-	  right_arm_touch_bottom = is_arm_right_touch_bottom();
+    getJoystickSettings(joystick);
+    PlaySound(soundBlip);
+    nxtDisplayTextLine(2, "Standing By");
+    wait1Msec(50);
+  }
 
-	  int IR_Direction;
-	  IR_Direction=get_IR_direction();
-
-	  int left_angle_counter, right_angle_counter;
-	  left_angle_counter=get_arm_left_pos();
-	  right_angle_counter=get_arm_right_pos();
-
-	  int left_ring_weight, right_ring_weight;
-	  left_ring_weight=get_left_ring_weight();
-	  right_ring_weight=get_right_ring_weight();
-
-    nxtDisplayCenteredTextLine(0, "tEaM 1302 R2");
-    nxtDisplayTextLine(2, "Touch:L%3d R%3d", left_arm_touch_bottom, right_arm_touch_bottom);
-    nxtDisplayTextLine(3, "Angle:L%3d R%3d", left_angle_counter, right_angle_counter);
-    nxtDisplayTextLine(4, "Weigh:L%3d R%3d", left_ring_weight, right_ring_weight);
-    nxtDisplayTextLine(5, "IR   : %2d", IR_Direction);
-
+  if (!joystick.UserMode) // Autonomous Mode or skip to human control
+  {
+    PlaySound(soundBeepBeep);
+  	init_arm_pos();
+    AutoRun();
+    while(true)
+    {
+      getJoystickSettings(joystick);
+      if (joystick.StopPgm)
+        break;
+      if (joystick.UserMode)
+				break;
+    }
   };
+
+  while (joystick.StopPgm)
+  {
+   	RunAt(0,0,0);
+    getJoystickSettings(joystick);
+    PlaySound(soundBeepBeep);
+    nxtDisplayTextLine(2, "Standing By");
+    wait1Msec(50);
+  }
+  TeleOp();
 }
